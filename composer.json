@@ -15,7 +15,11 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "michcald/mvc": "dev-master"
+        "symfony/yaml": "2.3.*@dev",
+        "michcald/mvc": "dev-master",
+        "michcald/db": "dev-master",
+        "michcald/validator": "dev-master",
+        "michcald/paginator": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
@@ -26,6 +30,18 @@
         {
             "type": "vcs",
             "url":  "git@github.com:michcald/mvc.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:michcald/db.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:michcald/validator.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:michcald/paginator.git"
         }
     ],
     "autoload": {
