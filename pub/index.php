@@ -2,117 +2,38 @@
 
 include '../vendor/autoload.php';
 
-ini_set('display_errors', 1);
+$config = \Michcald\Dummy\Config::getInstance();
+try {
+    $config->load('../app/config/parameters.yml');
+} catch (\Exception $e) {
+    die ($e->getMessage());
+}
+
+if ($config->env == 'dev') {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+}
 
 $mvc = new \Michcald\Mvc\Mvc();
 
-// adding routes
+foreach ($config->routes as $routeConfig) {
+    
+    $uri = new \Michcald\Mvc\Router\Route\Uri();
+    $uri->setPattern($routeConfig['uri']['pattern']);
 
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('api/{repository}/_info')
-        ->setRequirement('repository', '[a-z0-9_]+');
+    foreach ($routeConfig['uri']['requirements'] as $requirement) {
+        $uri->setRequirement($requirement['param'], $requirement['value']);
+    }
+    
+    $route = new \Michcald\Mvc\Router\Route();
+    $route->setMethods($routeConfig['methods'])
+        ->setUri($uri)
+        ->setId($routeConfig['name'])
+        ->setControllerClass($routeConfig['controller'])
+        ->setActionName($routeConfig['action']);
 
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('GET'))
-    ->setUri($uri)
-    ->setId('dummy.repo.info')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('infoAction');
-
-$mvc->addRoute($route);
-
-// --
-
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('api/{repository}')
-        ->setRequirement('repository', '[a-z0-9_]+');
-
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('GET'))
-    ->setUri($uri)
-    ->setId('dummy.repo.list')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('listAction');
-
-$mvc->addRoute($route);
-
-// --
-
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('api/{repository}/{id}')
-        ->setRequirement('repository', '[a-z0-9_]+')
-        ->setRequirement('id', '\d+');
-
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('GET'))
-    ->setUri($uri)
-    ->setId('dummy.repo.read')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('readAction');
-
-$mvc->addRoute($route);
-
-// --
-
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('api/{repository}')
-        ->setRequirement('repository', '[a-z0-9_]+');
-
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('POST'))
-    ->setUri($uri)
-    ->setId('dummy.repo.create')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('createAction');
-
-$mvc->addRoute($route);
-
-// --
-
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('api/{repository}/{id}')
-        ->setRequirement('repository', '[a-z0-9_]+')
-        ->setRequirement('id', '\d+');
-
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('PUT'))
-    ->setUri($uri)
-    ->setId('dummy.repo.update')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('updateAction');
-
-$mvc->addRoute($route);
-
-// --
-
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('api/{repository}/{id}')
-        ->setRequirement('repository', '[a-z0-9_]+')
-        ->setRequirement('id', '\d+');
-
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('DELETE'))
-    ->setUri($uri)
-    ->setId('dummy.repo.delete')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('deleteAction');
-
-$mvc->addRoute($route);
-
-// --
-
-$uri = new \Michcald\Mvc\Router\Route\Uri();
-$uri->setPattern('{any}')
-        ->setRequirement('any', '.*');
-
-$route = new \Michcald\Mvc\Router\Route();
-$route->setMethods(array('GET', 'POST', 'PUT', 'DELETE', 'LINK', 'UNLINK', 'PATCH'))
-    ->setUri($uri)
-    ->setId('dummy.error')
-    ->setControllerClass('\Michcald\Dummy\Controller\RepositoryController')
-    ->setActionName('errorAction');
-
-$mvc->addRoute($route);
+    $mvc->addRoute($route);
+}
 
 
 // building the request
