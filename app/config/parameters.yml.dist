@@ -1,0 +1,19 @@
+url:
+    base: http://localhost/dummy2/dummy2
+
+path:
+    public_folder: pub
+    uploads_folder: pub/uploads
+
+database:
+    adapter: MYSQL
+    host: localhost
+    user: root
+    password: ~
+    dbname: dbname
+
+auth:
+    - user: username
+      password: password
+    - user: username
+      password: password
