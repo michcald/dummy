@@ -2,35 +2,63 @@
 
 namespace Michcald\Dummy\Controller;
 
+use Michcald\Dummy\Response\JsonResponse;
+use Michcald\Dummy\Response\Error\NotFoundResponse;
+use Michcald\Dummy\Response\Error\NotAuthorizedResponse;
+use Michcald\Dummy\Response\Error\InternalResponse as InternalErrorResponse;
+
 class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 {
+    private function auth()
+    {
+        $user = $this->getRequest()->getHeader('PHP_AUTH_USER');
+        $password = $this->getRequest()->getHeader('PHP_AUTH_PW');
+        
+        if (!$user || $user != 'stefano') {
+            return false;
+        }
+        
+        if ($password == '123456') {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private function getRepositoryClassName($repository)
+    {
+        $tmp = \Michcald\Dummy\Util\String::underscoresToCamelCase($repository, true);
+        
+        return "\\App\\Repository\\" . $tmp;
+    }
+    
     public function infoAction($repository)
     {
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json');
-
-        $repoClass = "\\App\\Repository\\" . $this->dashesToCamelCase($repository, true);
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
+        }
+        
+        $response = new JsonResponse();
+        
+        $repoClass = $this->getRepositoryClassName($repository);
 
         if (!class_exists($repoClass)) {
-            $response->setStatusCode(500)
-                    ->setContent(json_encode(array(
-                        'error' => 'not valid repo'
-                    )));
-            return $response;
+            return new NotFoundResponse('Repository not found');
         }
 
         $repo = new $repoClass;
 
-        $json = json_encode($repo->toArray());
-
-        $response->setStatusCode(200)
-                ->setContent($json);
+        $response->setContent($repo->toArray());
 
         return $response;
     }
 
     public function listAction($repository)
     {
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
+        }
+        
         $page = (int) $this->getRequest()->getQueryParam('page', 1);
         $limit = (int) $this->getRequest()->getQueryParam('limit', 10);
 
@@ -39,87 +67,185 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         $sortField = $this->getRequest()->getQueryParam('sfield', 'id');
         $sortDir = $this->getRequest()->getQueryParam('sdir', 'desc');
 
-        // get the parents for filtering
+        //
+        
+        $response = new JsonResponse();
 
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json')
-                ->setStatusCode(501)
-                ->setContent(json_encode(array(
-                    'err' => 'not implemented'
-                )));
+        $repoClass = $this->getRepositoryClassName($repository);
+
+        if (!class_exists($repoClass)) {
+            return new NotFoundResponse('Repository not found');
+        }
+
+        $repo = new $repoClass;
+        
+        $paginator = new \Michcald\Paginator();
+        $paginator->setItemsPerPage($limit)
+                ->setCurrentPageNumber($page);
+        
+        $order = $sortField . ' ' . $sortDir;
+        
+        $total = $repo->countBy(
+                array(),
+                $query // like
+        );
+        
+        $entities = $repo->findBy(
+                array(),
+                $query, // like
+                $order,
+                $paginator->getLimit(), 
+                $paginator->getOffset()
+        );
+        
+        $array = array(
+            'paginator' => array(
+                'page' => $page,
+                'total' => $total
+            ),
+            'results' => array()
+        );
+        
+        foreach ($entities as $entity) {
+            $array['results'][] = $entity->toExposeArray();
+        }
+        
+        $response->setContent($array);
 
         return $response;
     }
 
     public function readAction($repository, $id)
     {
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json')
-                ->setStatusCode(501)
-                ->setContent(json_encode(array(
-                    'err' => 'not implemented'
-                )));
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
+        }
+        
+        $response = new JsonResponse();
+
+        $repoClass = $this->getRepositoryClassName($repository);
+
+        if (!class_exists($repoClass)) {
+            return new NotFoundResponse('Repository not found');
+        }
+
+        $repo = new $repoClass;
+
+        $entity = $repo->findOne($id);
+
+        if (!$entity) {
+            return new NotFoundResponse('Entity not found');
+        }
+
+        $response->setContent($entity->toExposeArray());
 
         return $response;
     }
 
     public function createAction($repository)
     {
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json')
-                ->setStatusCode(501)
-                ->setContent(json_encode(array(
-                    'err' => 'not implemented'
-                )));
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
+        }
+        
+        $response = new JsonResponse();
 
-        return $response;
+        $repoClass = $this->getRepositoryClassName($repository);
+
+        if (!class_exists($repoClass)) {
+            return new NotFoundResponse('Repository not found');
+        }
+
+        $repo = new $repoClass;
+        
+        $data = $this->getRequest()->getData();
+        
+        $entity = $repo->create($data);
+        
+        if (!$entity) {
+            return new InternalErrorResponse('Cannot create entity');
+        }
+        
+        $id = $repo->persist($entity);
+        
+        if (!$id) {
+            return new InternalErrorResponse('Cannot persist entity');
+        }
+        
+        return $this->readAction($repository, $id);
     }
 
     public function updateAction($repository, $id)
     {
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json')
-                ->setStatusCode(501)
-                ->setContent(json_encode(array(
-                    'err' => 'not implemented'
-                )));
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
+        }
+        
+        $response = new JsonResponse();
 
-        return $response;
+        $repoClass = $this->getRepositoryClassName($repository);
+
+        if (!class_exists($repoClass)) {
+            return new NotFoundResponse('Repository not found');
+        }
+
+        $repo = new $repoClass;
+        
+        $entity = $repo->findOne($id);
+
+        if (!$entity) {
+            return new NotFoundResponse('Entity not found');
+        }
+        
+        $data = $this->getRequest()->getData();
+        
+        foreach ($data as $key => $value) {
+            $entity->$key = $value;
+        }
+        
+        $id = $repo->persist($entity);
+        
+        if (!$id) {
+            return new InternalErrorResponse('Cannot persist entity');
+        }
+        
+        return $this->readAction($repository, $id);
     }
 
     public function deleteAction($repository, $id)
     {
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json')
-                ->setStatusCode(501)
-                ->setContent(json_encode(array(
-                    'err' => 'not implemented'
-                )));
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
+        }
+        
+        $response = new JsonResponse();
+
+        $repoClass = $this->getRepositoryClassName($repository);
+
+        if (!class_exists($repoClass)) {
+            return new NotFoundResponse('Repository not found');
+        }
+
+        $repo = new $repoClass;
+        
+        $entity = $repo->findOne($id);
+
+        if (!$entity) {
+            return new NotFoundResponse('Entity not found');
+        }
+        
+        $repo->delete($entity);
 
         return $response;
     }
 
     public function errorAction($any)
     {
-        $response = new \Michcald\Mvc\Response();
-        $response->addHeader('Content-Type', 'application/json')
-                ->setStatusCode(500)
-                ->setContent(json_encode(array(
-                    'err' => 'not routes found'
-                )));
-
-        return $response;
-    }
-
-    private function dashesToCamelCase($string, $capitalizeFirstCharacter = false)
-    {
-
-        $str = str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
-
-        if (!$capitalizeFirstCharacter) {
-            $str[0] = strtolower($str[0]);
+        if (!$this->auth()) {
+            return new NotAuthorizedResponse();
         }
-
-        return $str;
+        
+        // may be better change type of response
+        return new InternalErrorResponse('No routes found');
     }
 }

@@ -63,8 +63,24 @@ class Entity
             $fieldName = $field->getName();
 
             if ($field->isExposable()) {
-                if (isset($this->$fieldName)) {
-                    $array[$fieldName] = $this->fieldName;
+                if (array_key_exists($fieldName, $this->vars)) {
+                    
+                    if ($field instanceof Entity\Field\File) {
+                        
+                        $url = 'uploads/' . 
+                                $this->getRepository()->getName() . '/' .
+                                $this->id . '/' . $this->vars[$fieldName];
+                        
+                        $array[$fieldName] = array(
+                            'url' => $url,
+                            'size' => filesize($url)
+                        );
+                        
+                        // if img write the width and the height
+                    } else {
+                        $array[$fieldName] = $this->vars[$fieldName];
+                    }
+                    
                 } else {
                     $array[$fieldName] = null;
                 }

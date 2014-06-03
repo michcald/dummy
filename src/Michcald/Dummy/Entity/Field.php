@@ -106,7 +106,7 @@ abstract class Field
         return $this->exposable;
     }
 
-    public function addValidator($validator)
+    public function addValidator(\Michcald\Validator $validator)
     {
         $this->validators[] = $validator;
 

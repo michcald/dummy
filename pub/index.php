@@ -4,14 +4,6 @@ include '../vendor/autoload.php';
 
 ini_set('display_errors', 1);
 
-$adapter = 'mysqli';
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'dummy2';
-
-$db = new \Michcald\Db\Adapter($adapter, $host, $username, $password, $dbname);
-
 $mvc = new \Michcald\Mvc\Mvc();
 
 // adding routes
