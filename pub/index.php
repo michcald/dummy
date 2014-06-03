@@ -5,6 +5,10 @@ include '../vendor/autoload.php';
 $config = \Michcald\Dummy\Config::getInstance();
 try {
     $config->load('../app/config/parameters.yml');
+    
+    $config->load($config->config['routes']);
+    $config->load($config->config['repositories']);
+
 } catch (\Exception $e) {
     die ($e->getMessage());
 }

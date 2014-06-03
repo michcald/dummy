@@ -1,0 +1,76 @@
+routes:
+    - name: dummy.repo.info
+      methods: ["GET"]
+      uri:
+          pattern: api/{repository}/_info
+          requirements:
+              - param: repository
+                value: "[a-z0-9]+"
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: infoAction
+
+    - name: dummy.repo.list
+      methods: ["GET"]
+      uri:
+          pattern: api/{repository}
+          requirements:
+              - param: repository
+                value: "[a-z0-9]+"
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: listAction
+
+    - name: dummy.repo.read
+      methods: ["GET"]
+      uri:
+          pattern: api/{repository}/{id}
+          requirements:
+              - param: repository
+                value: "[a-z0-9]+"
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: readAction
+
+    - name: dummy.repo.create
+      methods: ["POST"]
+      uri:
+          pattern: api/{repository}
+          requirements:
+              - param: repository
+                value: "[a-z0-9]+"
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: createAction
+
+    - name: dummy.repo.update
+      methods: ["PUT"]
+      uri:
+          pattern: api/{repository}/{id}
+          requirements:
+              - param: repository
+                value: "[a-z0-9]+"
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: updateAction
+
+    - name: dummy.repo.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: api/{repository}/{id}
+          requirements:
+              - param: repository
+                value: "[a-z0-9]+"
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: deleteAction
+
+    - name: dummy.error
+      methods: ["GET", "POST", "PUT", "DELETE", "LINK", "UNLINK", "PATCH"]
+      uri:
+          pattern: "{any}"
+          requirements:
+              - param: any
+                value: ".*"
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: errorAction

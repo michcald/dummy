@@ -6,7 +6,7 @@ class Config
 {
     private static $instance = null;
     
-    private $data;
+    private $data = array();
     
     private function __construct() {}
     
@@ -22,12 +22,14 @@ class Config
     public function load($filename)
     {
         if (!file_exists($filename)) {
-            throw new \Exception('Config file not found');
+            throw new \Exception('Config file not found: ' . $filename);
         }
         
         $content = file_get_contents($filename);
         
-        $this->data = \Symfony\Component\Yaml\Yaml::parse($content, true);
+        $data = \Symfony\Component\Yaml\Yaml::parse($content, true);
+        
+        $this->data = array_merge($this->data, $data);
         
         return $this->data;
     }
@@ -35,5 +37,10 @@ class Config
     public function __get($key)
     {
         return $this->data[$key];
+    }
+    
+    public function getData()
+    {
+        return $this->data;
     }
 }
