@@ -5,6 +5,8 @@ namespace Michcald\Dummy;
 abstract class Repository
 {
     private $fields = array();
+    
+    private $db;
 
     public function __construct()
     {
@@ -39,7 +41,17 @@ abstract class Repository
 
     abstract public function getName();
 
-    abstract public function getDb();
+    public function setDb(\Michcald\Db $db)
+    {
+        $this->db = $db;
+        
+        return $this;
+    }
+    
+    public function getDb()
+    {
+        return $this->db;
+    }
 
     public function getDescription()
     {

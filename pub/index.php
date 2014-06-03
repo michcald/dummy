@@ -35,7 +35,6 @@ foreach ($config->routes as $routeConfig) {
     $mvc->addRoute($route);
 }
 
-
 // building the request
 
 $request = new \Michcald\Mvc\Request();

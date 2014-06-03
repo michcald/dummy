@@ -4,6 +4,18 @@ namespace App\Repository;
 
 class Category extends \Michcald\Dummy\Repository
 {
+    public function getDb()
+    {
+        $config = \Michcald\Dummy\Config::getInstance();
+        return new \Michcald\Db\Adapter(
+            $config->database['adapter'], 
+            $config->database['host'],
+            $config->database['user'],
+            $config->database['password'],
+            $config->database['dbname']
+        );
+    }
+    
     public function __construct()
     {
         parent::__construct();
@@ -55,11 +67,6 @@ class Category extends \Michcald\Dummy\Repository
     public function getMaxRecords()
     {
         return 100000000;
-    }
-
-    public function getDb()
-    {
-        return \App\Db::get();
     }
 }
 
