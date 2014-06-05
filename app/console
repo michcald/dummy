@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ "$1" == "install" ]; then
+    rm -rf composer.phar composer.lock vendor
+    php -r "readfile('https://getcomposer.org/installer');" | php
+    php composer.phar install
+    echo "Installation completed"
+elif [ "$1" == "entity:create" ]
+then
+    # verify if vendor exists
+    if [ ! -d "vendor" ]; then
+        echo "Cannot proceed, run ./app/console.sh install"
+    else
+        cd pub
+        php index.php entity:create
+    fi
+else
+    echo "Missing argument"
+fi

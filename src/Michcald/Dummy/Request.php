@@ -15,6 +15,9 @@ class Request extends \Michcald\Mvc\Request
     
     private function buildCliRequest()
     {
+        global $argv;
+        global $argc;
+        
         $uri = isset($argv[1]) ? $argv[1] : '';
 
         $query = array();

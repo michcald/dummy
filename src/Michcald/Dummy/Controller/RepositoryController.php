@@ -155,7 +155,15 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $data = $this->getRequest()->getData();
         
-        $entity = $repo->create($data);
+        try {
+            $entity = $repo->create($data);
+        } catch (\Exception $e) { // ExceptionMissingField
+            $response->setStatusCode(400);
+            // crea error missing field response e exception
+            return $response;
+        }  catch (\Exception $e) { // Exception
+            return new InternalErrorResponse('Cannot create entity');
+        }
         
         if (!$entity) {
             return new InternalErrorResponse('Cannot create entity');
@@ -167,7 +175,9 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
             return new InternalErrorResponse('Cannot persist entity');
         }
         
-        return $this->readAction($repository, $id);
+        $response->setStatusCode(201);
+        
+        return $response;
     }
 
     public function updateAction($repository, $id)
@@ -199,11 +209,15 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $id = $repo->persist($entity);
         
+        // 400 missing field
+        
         if (!$id) {
             return new InternalErrorResponse('Cannot persist entity');
         }
         
-        return $this->readAction($repository, $id);
+        $response->setStatusCode(204); // no content
+        
+        return $response;
     }
 
     public function deleteAction($repository, $id)
@@ -227,8 +241,17 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
             return new NotFoundResponse('Entity not found');
         }
         
-        $repo->delete($entity);
-
+        try {
+            $repo->delete($entity);
+        } catch (\Exception $e) {
+            // 500 cannot delete
+            $response = new InternalErrorResponse();
+            $response->setMessage('Cannot delete the entity');
+            return $response;
+        }
+        
+        $response->setStatusCode(204); // no content
+        
         return $response;
     }
 
