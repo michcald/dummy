@@ -14,12 +14,16 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         $user = $this->getRequest()->getHeader('PHP_AUTH_USER');
         $password = $this->getRequest()->getHeader('PHP_AUTH_PW');
         
-        if (!$user || $user != 'stefano') {
+        if (!$user || !$password) {
             return false;
         }
         
-        if ($password == '123456') {
-            return true;
+        $config = \Michcald\Dummy\Config::getInstance();
+        
+        foreach ($config->auth as $auth) {
+            if ($auth['user'] == $user) {
+                return $auth['password'] == $password;
+            }
         }
         
         return false;

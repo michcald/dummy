@@ -1,2 +1,29 @@
 repositories:
     - name: post_category
+      label:
+          singular: Category
+          plural: Categories
+      parents: []
+      children: []
+      fields:
+          - name: name
+            type: string
+            label: Category name
+            description: Category name descr
+            searchable: true
+            required: true
+            validators: []
+          - name: description
+            type: text
+            label: Category descr
+            description: Category descr descr
+            searchable: true
+            required: false
+            validators: []
+          - name: img
+            type: file
+            label: File
+            description: ~
+            searchable: false
+            required: true
+            validators: []

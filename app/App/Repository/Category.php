@@ -4,18 +4,6 @@ namespace App\Repository;
 
 class Category extends \Michcald\Dummy\Repository
 {
-    public function getDb()
-    {
-        $config = \Michcald\Dummy\Config::getInstance();
-        return new \Michcald\Db\Adapter(
-            $config->database['adapter'], 
-            $config->database['host'],
-            $config->database['user'],
-            $config->database['password'],
-            $config->database['dbname']
-        );
-    }
-    
     public function __construct()
     {
         parent::__construct();
@@ -47,26 +35,6 @@ class Category extends \Michcald\Dummy\Repository
                 ->setExpose(true)
                 ->setSearchable(false);
         $this->addField($img);
-    }
-
-    public function getName()
-    {
-        return 'post_category';
-    }
-
-    public function getLabel($plural = false)
-    {
-        return $plural ? 'Post Categories' : 'Post Category';
-    }
-
-    public function getParentEntities()
-    {
-        return array();
-    }
-
-    public function getMaxRecords()
-    {
-        return 100000000;
     }
 }
 

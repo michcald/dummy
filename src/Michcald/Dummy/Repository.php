@@ -2,14 +2,18 @@
 
 namespace Michcald\Dummy;
 
-abstract class Repository
+class Repository
 {
+    private $name;
+    
     private $fields = array();
     
     private $db;
 
-    public function __construct()
+    public function __construct($name)
     {
+        $this->name = $name;
+        
         $id = new Entity\Field\Integer('id');
         $id->setExpose(true)
             ->setSearchable(false);
@@ -59,8 +63,6 @@ abstract class Repository
     }
 
     abstract public function getLabel($plural = false);
-
-    abstract public function getMaxRecords();
 
     public function getParentEntities()
     {
@@ -256,15 +258,11 @@ abstract class Repository
         }
         
         if (!$entity->id) {
-            if ($this->getMaxRecords() && $this->count() < $this->getMaxRecords()) {
-                $id = $this->getDb()->insert(
-                    $this->getName(),
-                    $toSaveArray
-                );
-                $entity->id = $id;
-            } else {
-                return false;
-            }
+            $id = $this->getDb()->insert(
+                $this->getName(),
+                $toSaveArray
+            );
+            $entity->id = $id;
         } else {
             $this->getDb()->update(
                 $this->getName(),
@@ -273,11 +271,13 @@ abstract class Repository
             );
         }
         
-        if (!is_dir('uploads/' . $this->getName())) {
-            mkdir('uploads/' . $this->getName());
+        $config = Config::getInstance();
+        
+        if (!is_dir($config->path['upload_folder'] . '/' . $this->getName())) {
+            mkdir($config->path['upload_folder'] . '/' . $this->getName());
         }
         
-        $dir = 'uploads/' . $this->getName() . '/' . $entity->id;
+        $dir = $config->path['upload_folder'] . '/' . $this->getName() . '/' . $entity->id;
         if (!is_dir($dir)) {
             mkdir($dir);
         }
@@ -308,7 +308,9 @@ abstract class Repository
             'id=' . (int)$entity->id
         );
         
-        $dir = 'uploads/' . $this->getName() . '/' . $entity->id;
+        $config = Config::getInstance();
+        
+        $dir = $config->path['upload_folder'] . '/' . $this->getName() . '/' . $entity->id;
         if (is_dir($dir)) {
             $this->delTree($dir);
         }
@@ -332,7 +334,6 @@ abstract class Repository
                 'plural' => $this->getLabel(true)
             ),
             'description' => $this->getDescription(),
-            'max_records' => $this->getMaxRecords(),
             'parents' => $this->getParentEntities(),
             'children' => $this->getChildEntitites(),
             'fields' => array()
