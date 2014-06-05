@@ -46,8 +46,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Michcald": "src",
-            "App": "app"
+            "Michcald": "src"
         }
     }
 }

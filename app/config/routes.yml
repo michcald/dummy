@@ -5,7 +5,7 @@ routes:
           pattern: api/{repository}/_info
           requirements:
               - param: repository
-                value: "[a-z0-9]+"
+                value: "[a-z0-9_]+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: infoAction
 
@@ -15,7 +15,7 @@ routes:
           pattern: api/{repository}
           requirements:
               - param: repository
-                value: "[a-z0-9]+"
+                value: "[a-z0-9_]+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: listAction
 
@@ -25,7 +25,7 @@ routes:
           pattern: api/{repository}/{id}
           requirements:
               - param: repository
-                value: "[a-z0-9]+"
+                value: "[a-z0-9_]+"
               - param: id
                 value: \d+
       controller: \Michcald\Dummy\Controller\RepositoryController
@@ -37,7 +37,7 @@ routes:
           pattern: api/{repository}
           requirements:
               - param: repository
-                value: "[a-z0-9]+"
+                value: "[a-z0-9_]+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: createAction
 
@@ -47,7 +47,7 @@ routes:
           pattern: api/{repository}/{id}
           requirements:
               - param: repository
-                value: "[a-z0-9]+"
+                value: "[a-z0-9_]+"
               - param: id
                 value: \d+
       controller: \Michcald\Dummy\Controller\RepositoryController
@@ -59,7 +59,7 @@ routes:
           pattern: api/{repository}/{id}
           requirements:
               - param: repository
-                value: "[a-z0-9]+"
+                value: "[a-z0-9_]+"
               - param: id
                 value: \d+
       controller: \Michcald\Dummy\Controller\RepositoryController

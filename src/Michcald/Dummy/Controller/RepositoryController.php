@@ -7,6 +7,8 @@ use Michcald\Dummy\Response\Error\NotFoundResponse;
 use Michcald\Dummy\Response\Error\NotAuthorizedResponse;
 use Michcald\Dummy\Response\Error\InternalResponse as InternalErrorResponse;
 
+use Michcald\Dummy\RepositoryRegistry;
+
 class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 {
     private function auth()
@@ -29,13 +31,6 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         return false;
     }
     
-    private function getRepositoryClassName($repository)
-    {
-        $tmp = \Michcald\Dummy\Util\String::underscoresToCamelCase($repository, true);
-        
-        return "\\App\\Repository\\" . $tmp;
-    }
-    
     public function infoAction($repository)
     {
         if (!$this->auth()) {
@@ -44,13 +39,12 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $response = new JsonResponse();
         
-        $repoClass = $this->getRepositoryClassName($repository);
-
-        if (!class_exists($repoClass)) {
-            return new NotFoundResponse('Repository not found');
+        $repo = null;
+        try {
+            $repo = RepositoryRegistry::getInstance()->getRepository($repository);
+        } catch (\Exception $e) {
+            return new NotFoundResponse('Repository not found: ' . $repository);
         }
-
-        $repo = new $repoClass;
 
         $response->setContent($repo->toArray());
 
@@ -75,13 +69,12 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $response = new JsonResponse();
 
-        $repoClass = $this->getRepositoryClassName($repository);
-
-        if (!class_exists($repoClass)) {
-            return new NotFoundResponse('Repository not found');
+        $repo = null;
+        try {
+            $repo = RepositoryRegistry::getInstance()->getRepository($repository);
+        } catch (\Exception $e) {
+            return new NotFoundResponse('Repository not found: ' . $repository);
         }
-
-        $repo = new $repoClass;
         
         $paginator = new \Michcald\Paginator();
         $paginator->setItemsPerPage($limit)
@@ -127,13 +120,12 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $response = new JsonResponse();
 
-        $repoClass = $this->getRepositoryClassName($repository);
-
-        if (!class_exists($repoClass)) {
-            return new NotFoundResponse('Repository not found');
+        $repo = null;
+        try {
+            $repo = RepositoryRegistry::getInstance()->getRepository($repository);
+        } catch (\Exception $e) {
+            return new NotFoundResponse('Repository not found: ' . $repository);
         }
-
-        $repo = new $repoClass;
 
         $entity = $repo->findOne($id);
 
@@ -154,13 +146,12 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $response = new JsonResponse();
 
-        $repoClass = $this->getRepositoryClassName($repository);
-
-        if (!class_exists($repoClass)) {
-            return new NotFoundResponse('Repository not found');
+        $repo = null;
+        try {
+            $repo = RepositoryRegistry::getInstance()->getRepository($repository);
+        } catch (\Exception $e) {
+            return new NotFoundResponse('Repository not found: ' . $repository);
         }
-
-        $repo = new $repoClass;
         
         $data = $this->getRequest()->getData();
         
@@ -187,13 +178,12 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $response = new JsonResponse();
 
-        $repoClass = $this->getRepositoryClassName($repository);
-
-        if (!class_exists($repoClass)) {
-            return new NotFoundResponse('Repository not found');
+        $repo = null;
+        try {
+            $repo = RepositoryRegistry::getInstance()->getRepository($repository);
+        } catch (\Exception $e) {
+            return new NotFoundResponse('Repository not found: ' . $repository);
         }
-
-        $repo = new $repoClass;
         
         $entity = $repo->findOne($id);
 
@@ -224,13 +214,12 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $response = new JsonResponse();
 
-        $repoClass = $this->getRepositoryClassName($repository);
-
-        if (!class_exists($repoClass)) {
-            return new NotFoundResponse('Repository not found');
+        $repo = null;
+        try {
+            $repo = RepositoryRegistry::getInstance()->getRepository($repository);
+        } catch (\Exception $e) {
+            return new NotFoundResponse('Repository not found: ' . $repository);
         }
-
-        $repo = new $repoClass;
         
         $entity = $repo->findOne($id);
 

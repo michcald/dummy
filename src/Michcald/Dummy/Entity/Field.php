@@ -16,7 +16,7 @@ abstract class Field
 
     private $searchable = false;
 
-    private $exposable = false;
+    //private $exposable = false;
 
     //private $list = false;
 
@@ -28,6 +28,8 @@ abstract class Field
     {
         $this->name = $name;
     }
+    
+    abstract public function getDiscriminator();
 
     public function getName()
     {
@@ -94,18 +96,6 @@ abstract class Field
         return $this->searchable;
     }
 
-    public function setExpose($expose)
-    {
-        $this->exposable = (bool)$expose;
-
-        return $this;
-    }
-
-    public function isExposable()
-    {
-        return $this->exposable;
-    }
-
     public function addValidator(\Michcald\Validator $validator)
     {
         $this->validators[] = $validator;
@@ -129,11 +119,10 @@ abstract class Field
     {
         $array = array(
             'name' => $this->getName(),
-            'type' => get_class($this),
+            'type' => $this->getDiscriminator(),
             'label' => $this->getLabel(),
             'description' => $this->getDescription(),
             'required' => $this->isRequired(),
-            'exposable' => $this->isExposable(),
             'searchable' => $this->isSearchable()
         );
 

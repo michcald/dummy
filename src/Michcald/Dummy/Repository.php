@@ -6,32 +6,30 @@ class Repository
 {
     private $name;
     
+    private $description;
+    
+    private $singularLabel;
+    
+    private $pluralLabel;
+    
     private $fields = array();
     
     private $db;
+    
+    private $parents = array();
+    
+    private $children = array();
 
     public function __construct($name)
     {
         $this->name = $name;
         
         $id = new Entity\Field\Integer('id');
-        $id->setExpose(true)
-            ->setSearchable(false);
         // add validation
         $this->addField($id);
-
-        foreach ($this->getParentEntities() as $entity) {
-            $foreignKey = new Entity\Field\Integer($entity . '_id');
-            $foreignKey
-                ->setLabel('')
-                ->setDescription('')
-                ->setExpose(true)
-                ->setSearchable(false);
-            $this->addField($foreignKey);
-        }
     }
 
-    protected function addField(Entity\Field $field)
+    public function addField(Entity\Field $field)
     {
         $this->fields[] = $field;
 
@@ -43,9 +41,19 @@ class Repository
         return $this->fields;
     }
 
-    abstract public function getName();
+    public function setName($name)
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
+    
+    public function getName()
+    {
+        return $this->name;
+    }
 
-    public function setDb(\Michcald\Db $db)
+    public function setDb(\Michcald\Db\Adapter $db)
     {
         $this->db = $db;
         
@@ -56,22 +64,73 @@ class Repository
     {
         return $this->db;
     }
+    
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        
+        return $this;
+    }
 
     public function getDescription()
     {
-        return '';
+        return $this->description;
     }
 
-    abstract public function getLabel($plural = false);
-
-    public function getParentEntities()
+    public function setSingularLabel($singularLabel)
     {
-        return array();
+        $this->singularLabel = $singularLabel;
+        
+        return $this;
+    }
+    
+    public function getSingularLabel()
+    {
+        return $this->singularLabel;
+    }
+    
+    public function setPluralLabel($pluralLabel)
+    {
+        $this->pluralLabel = $pluralLabel;
+        
+        return $this;
+    }
+    
+    public function getPluralLabel()
+    {
+        return $this->pluralLabel;
     }
 
-    public function getChildEntitites()
+    public function addParent($parent)
     {
-        return array();
+        $this->parents[] = $parent;
+        
+        $name = $parent . '_id';
+        
+        $field = new Entity\Field\Integer($name);
+        $field->setLabel($parent)
+                ->setRequired(true);
+        
+        $this->addField($field);
+        
+        return $this;
+    }
+    
+    public function getParents()
+    {
+        return $this->parents;
+    }
+
+    public function addChild($child)
+    {
+        $this->children[] = $child;
+        
+        return $this;
+    }
+    
+    public function getChildren()
+    {
+        return $this->children;
     }
 
     public function count()
@@ -273,11 +332,11 @@ class Repository
         
         $config = Config::getInstance();
         
-        if (!is_dir($config->path['upload_folder'] . '/' . $this->getName())) {
-            mkdir($config->path['upload_folder'] . '/' . $this->getName());
+        if (!is_dir($config->path['uploads_folder'] . '/' . $this->getName())) {
+            mkdir($config->path['uploads_folder'] . '/' . $this->getName());
         }
         
-        $dir = $config->path['upload_folder'] . '/' . $this->getName() . '/' . $entity->id;
+        $dir = $config->path['uploads_folder'] . '/' . $this->getName() . '/' . $entity->id;
         if (!is_dir($dir)) {
             mkdir($dir);
         }
@@ -310,7 +369,7 @@ class Repository
         
         $config = Config::getInstance();
         
-        $dir = $config->path['upload_folder'] . '/' . $this->getName() . '/' . $entity->id;
+        $dir = $config->path['uploads_folder'] . '/' . $this->getName() . '/' . $entity->id;
         if (is_dir($dir)) {
             $this->delTree($dir);
         }
@@ -330,12 +389,12 @@ class Repository
         $array = array(
             'name' => $this->getName(),
             'label' => array(
-                'singular' => $this->getLabel(),
-                'plural' => $this->getLabel(true)
+                'singular' => $this->getSingularLabel(),
+                'plural' => $this->getPluralLabel(true)
             ),
             'description' => $this->getDescription(),
-            'parents' => $this->getParentEntities(),
-            'children' => $this->getChildEntitites(),
+            'parents' => $this->getParents(),
+            'children' => $this->getChildren(),
             'fields' => array()
         );
 

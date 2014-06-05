@@ -1,5 +1,6 @@
 repositories:
     - name: post_category
+      description: ~
       label:
           singular: Category
           plural: Categories

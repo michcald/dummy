@@ -41,9 +41,54 @@ foreach ($config->routes as $routeConfig) {
 
 // building the repos
 
-// create repositoryProvider
-// get() is lazy loading the config file, if the repo do not exist 500
+$db = new Michcald\Db\Adapter(
+    $config->database['adapter'], 
+    $config->database['host'],
+    $config->database['user'], 
+    $config->database['password'], 
+    $config->database['dbname']
+);
 
+$registry = \Michcald\Dummy\RepositoryRegistry::getInstance();
+
+foreach ($config->repositories as $r) {
+    $repository = new \Michcald\Dummy\Repository($r['name']);
+    
+    $repository->setDescription($r['description'])
+            ->setSingularLabel($r['label']['singular'])
+            ->setPluralLabel($r['label']['plural'])
+            ->setDb($db);
+    
+    foreach ($r['parents'] as $p) {
+        $repository->addParent($p);
+    }
+    
+    foreach ($r['children'] as $c) {
+        $repository->addParent($c);
+    }
+    
+    foreach ($r['fields'] as $f) {
+        $field = null;
+        if ($f['type'] == 'string') {
+            $field = new Michcald\Dummy\Entity\Field\String($f['name']);
+        } else if ($f['type'] == 'text') {
+            $field = new \Michcald\Dummy\Entity\Field\Text($f['name']);
+        } else if ($f['type'] == 'file') {
+            $field = new \Michcald\Dummy\Entity\Field\File($f['name']);
+        }
+        
+        $field->setLabel($f['label'])
+            ->setDescription($f['description'])
+            ->setRequired($f['required'])
+            ->setSearchable($f['searchable']);
+        
+        // add validators
+        
+        $repository->addField($field);
+    }
+    
+    $registry->addRepository($repository);
+}
 
 $request = new \Michcald\Dummy\Request();
 
