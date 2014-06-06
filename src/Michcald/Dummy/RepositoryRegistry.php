@@ -34,4 +34,9 @@ class RepositoryRegistry
         
         throw new \Exception('Invalid repository: ' . $name);
     }
+    
+    public function getRepositories()
+    {
+        return $this->repositories;
+    }
 }

@@ -65,13 +65,29 @@ routes:
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: deleteAction
 
-    - name: dummy.entity.create
+    - name: dummy.repo.cli.create
       methods: ["CLI"]
       uri:
-          pattern: entity:create
+          pattern: repo:create
           requirements: []
-      controller: \Michcald\Dummy\Controller\EntityController
+      controller: \Michcald\Dummy\Controller\DummyController
       action: createAction
+    
+    - name: dummy.repo.cli.delete
+      methods: ["CLI"]
+      uri:
+          pattern: repo:delete
+          requirements: []
+      controller: \Michcald\Dummy\Controller\DummyController
+      action: deleteAction
+
+    - name: dummy.cli.info
+      methods: ["CLI"]
+      uri:
+          pattern: info
+          requirements: []
+      controller: \Michcald\Dummy\Controller\DummyController
+      action: infoAction
 
     - name: dummy.error
       methods: ["CLI", "GET", "POST", "PUT", "DELETE", "LINK", "UNLINK", "PATCH"]

@@ -5,15 +5,23 @@ if [ "$1" == "install" ]; then
     php -r "readfile('https://getcomposer.org/installer');" | php
     php composer.phar install
     echo "Installation completed"
-elif [ "$1" == "entity:create" ]
+elif [ "$1" == "info" ]
+then
+    cd pub
+    php index.php info
+elif [ "$1" == "repo:create" ]
 then
     # verify if vendor exists
     if [ ! -d "vendor" ]; then
         echo "Cannot proceed, run ./app/console.sh install"
     else
         cd pub
-        php index.php entity:create
+        php index.php repo:create
     fi
+elif [ "$1" == "repo:delete" ]
+then
+    cd pub
+    php index.php repo:delete
 else
-    echo "Missing argument"
+    echo "Missing argument" # stampa lista comandi
 fi
