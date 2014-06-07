@@ -220,7 +220,7 @@ class Repository
         return $entities;
     }
     
-    public function findBy(array $where, $query, $order, $limit, $offset)
+    public function findBy(array $where = array(), $query = null, $order = null, $limit = null, $offset = null)
     {
         $sql = 'SELECT * FROM ' . $this->getName() . ' WHERE ';
         
@@ -250,7 +250,13 @@ class Repository
             $sql .= ' ORDER BY ' . $order;
         }
         
-        $sql .= ' LIMIT ' . $limit  . ' OFFSET ' . $offset;
+        if ($limit) {
+            $sql .= ' LIMIT ' . $limit;
+        }
+        
+        if ($offset) {
+            $sql .= ' OFFSET ' . $offset;
+        }
         
         $rows = $this->getDb()->fetchAll($sql);
         

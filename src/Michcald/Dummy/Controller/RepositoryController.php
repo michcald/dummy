@@ -33,8 +33,8 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
         $query = $this->getRequest()->getQueryParam('query', false);
 
-        $sortField = $this->getRequest()->getQueryParam('orderb', 'id');
-        $sortDir = $this->getRequest()->getQueryParam('orderd', 'asc');
+        $sortField = $this->getRequest()->getQueryParam('orderb', null);
+        $sortDir = $this->getRequest()->getQueryParam('orderd', null);
 
         //
         
@@ -51,7 +51,14 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         $paginator->setItemsPerPage($limit)
                 ->setCurrentPageNumber($page);
         
-        $order = $sortField . ' ' . $sortDir;
+        $order = null;
+        if ($sortField) {
+            $order = $sortField;
+            if ($sortDir) {
+                $order .= ' ' . $sortDir;
+            }
+        }
+        
         
         $total = $repo->countBy(
                 array(),
