@@ -162,6 +162,7 @@ abstract class Field
             'label'       => $this->getLabel(),
             'description' => $this->getDescription(),
             'searchable'  => $this->isSearchable(),
+            'sortable'    => $this->isSortable(),
             'required'    => $this->isRequired(),
             'validators'  => array()
         );

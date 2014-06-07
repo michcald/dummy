@@ -10,7 +10,7 @@ abstract class AbstractResponse extends JsonResponse
     
     public function __construct($message = null)
     {
-        $this->addHeader('Content-Type', 'application/json');
+        $this->addHeader('Content-Type: application/json');
         
         if ($this->message) {
             $this->message = $message;

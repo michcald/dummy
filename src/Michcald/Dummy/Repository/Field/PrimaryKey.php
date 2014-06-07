@@ -9,6 +9,11 @@ class PrimaryKey extends \Michcald\Dummy\Repository\Field
         return 'primary_key';
     }
     
+    public function getLabel()
+    {
+        return 'ID';
+    }
+    
     public function toSQL()
     {
         return $this->getName() . ' INT(11) AUTO_INCREMENT, '

@@ -33,8 +33,8 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
         $query = $this->getRequest()->getQueryParam('query', false);
 
-        $sortField = $this->getRequest()->getQueryParam('sfield', 'id');
-        $sortDir = $this->getRequest()->getQueryParam('sdir', 'desc');
+        $sortField = $this->getRequest()->getQueryParam('orderb', 'id');
+        $sortDir = $this->getRequest()->getQueryParam('orderd', 'asc');
 
         //
         
@@ -58,6 +58,8 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
                 $query // like
         );
         
+        $paginator->setTotalItems($total);
+        
         $entities = $repo->findBy(
                 array(),
                 $query, // like
@@ -68,8 +70,11 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $array = array(
             'paginator' => array(
-                'page' => (int)$page,
-                'total' => (int)$total
+                'page' => array(
+                    'current' => $paginator->getCurrentPageNumber(),
+                    'total'   => $paginator->getNumberOfPages()
+                ),
+                'results' => $paginator->getTotalItems()
             ),
             'results' => array()
         );
@@ -208,11 +213,5 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         $response->setStatusCode(204); // no content
         
         return $response;
-    }
-
-    public function defaultAction($any)
-    {
-        // may be better change type of response
-        return new InternalErrorResponse('No routes found');
     }
 }

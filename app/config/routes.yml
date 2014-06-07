@@ -114,12 +114,12 @@ routes:
       controller: \Michcald\Dummy\Controller\Cli\DbController
       action: dropAction
 
-    - name: default
+    - name: not_found
       methods: ["CLI", "GET", "POST", "PUT", "DELETE", "LINK", "UNLINK", "PATCH", "OPTIONS"]
       uri:
           pattern: "{any}"
           requirements:
               - param: any
                 value: ".*"
-      controller: \Michcald\Dummy\Controller\RepositoryController
-      action: defaultAction
+      controller: \Michcald\Dummy\Controller\DummyController
+      action: notFoundAction

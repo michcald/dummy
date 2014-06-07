@@ -14,6 +14,19 @@ class ForeignKey extends \Michcald\Dummy\Repository\Field
         return $this->getName() . ' INT(11) NOT NULL';
     }
     
+    public function getLabel()
+    {
+        $label = parent::getLabel();
+        
+        $repositoryName = str_replace('_id', '', $this->getName());
+        
+        $registry = \Michcald\Dummy\RepositoryRegistry::getInstance();
+        
+        $repository = $registry->getRepository($repositoryName);
+        
+        return $repository->getSingularLabel();
+    }
+    
     public function toArray()
     {
         $array = parent::toArray();

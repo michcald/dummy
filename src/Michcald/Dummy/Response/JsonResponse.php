@@ -6,7 +6,7 @@ class JsonResponse extends \Michcald\Mvc\Response
 {
     public function __construct()
     {
-        $this->addHeader('Content-Type', 'application/json');
+        $this->addHeader('Content-Type: application/json');
     }
     
     public function setContent($content)

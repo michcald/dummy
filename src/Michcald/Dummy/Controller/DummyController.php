@@ -26,4 +26,10 @@ class DummyController extends \Michcald\Mvc\Controller\HttpController
         
         return $response;
     }
+    
+    public function notFoundAction($any)
+    {
+        // may be better change type of response
+        return new InternalErrorResponse('No routes found for: ' . $any);
+    }
 }

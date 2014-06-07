@@ -79,7 +79,8 @@ if (isset($config->repositories)) {
             $field->setLabel($f['label'])
                 ->setDescription($f['description'])
                 ->setRequired($f['required'])
-                ->setSearchable($f['searchable']);
+                ->setSearchable($f['searchable'])
+                ->setSortable($f['sortable']);
 
             // add validators
 

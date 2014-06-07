@@ -2,5 +2,5 @@ database:
     adapter: MYSQL
     host: localhost
     user: michael
-    password: ~
+    password: mand1ng0
     dbname: dummy
