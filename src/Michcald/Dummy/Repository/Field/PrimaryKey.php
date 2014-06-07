@@ -9,6 +9,11 @@ class PrimaryKey extends \Michcald\Dummy\Repository\Field
         return 'primary_key';
     }
     
+    public function isList()
+    {
+        return true;
+    }
+    
     public function getLabel()
     {
         return 'ID';

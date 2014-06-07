@@ -17,6 +17,10 @@ abstract class Field
     private $searchable = false;
     
     private $sortable = false;
+    
+    private $main = false;
+    
+    private $list = false;
 
     private $validationErrors = array();
 
@@ -108,6 +112,30 @@ abstract class Field
         return $this->sortable;
     }
     
+    public function setMain($main)
+    {
+        $this->main = (bool)$main;
+        
+        return $this;
+    }
+    
+    public function isMain()
+    {
+        return $this->main;
+    }
+    
+    public function setList($list)
+    {
+        $this->list = (bool)$list;
+        
+        return $this;
+    }
+    
+    public function isList()
+    {
+        return $this->list;
+    }
+    
     public function getValidationErrors()
     {
         return $this->validationErrors;
@@ -148,7 +176,8 @@ abstract class Field
             'description' => $this->getDescription(),
             'required' => $this->isRequired(),
             'searchable' => $this->isSearchable(),
-            'sortable' => $this->isSortable()
+            'sortable' => $this->isSortable(),
+            'list'        => $this->isList(),
         );
 
         return $array;
@@ -164,6 +193,8 @@ abstract class Field
             'searchable'  => $this->isSearchable(),
             'sortable'    => $this->isSortable(),
             'required'    => $this->isRequired(),
+            'main'        => $this->isMain(),
+            'list'        => $this->isList(),
             'validators'  => array()
         );
     }

@@ -32,7 +32,9 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         $limit = (int) $this->getRequest()->getQueryParam('limit', 10);
 
         $query = $this->getRequest()->getQueryParam('query', false);
-
+        
+        $filters = $this->getRequest()->getQueryParam('filters', array());
+        
         $sortField = $this->getRequest()->getQueryParam('orderb', null);
         $sortDir = $this->getRequest()->getQueryParam('orderd', null);
 
@@ -59,16 +61,15 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
             }
         }
         
-        
         $total = $repo->countBy(
-                array(),
+                $filters,
                 $query // like
         );
         
         $paginator->setTotalItems($total);
         
         $entities = $repo->findBy(
-                array(),
+                $filters,
                 $query, // like
                 $order,
                 $paginator->getLimit(), 

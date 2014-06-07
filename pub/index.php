@@ -80,7 +80,9 @@ if (isset($config->repositories)) {
                 ->setDescription($f['description'])
                 ->setRequired($f['required'])
                 ->setSearchable($f['searchable'])
-                ->setSortable($f['sortable']);
+                ->setSortable($f['sortable'])
+                ->setMain($f['main'])
+                ->setList($f['list']);
 
             // add validators
 

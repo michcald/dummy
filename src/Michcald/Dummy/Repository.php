@@ -127,6 +127,17 @@ class Repository
     {
         return $this->children;
     }
+    
+    public function getMainField()
+    {
+        foreach ($this->fields as $field) {
+            if ($field->isMain()) {
+                return $field;
+            }
+        }
+        
+        return null;
+    }
 
     public function count()
     {

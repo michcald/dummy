@@ -14,6 +14,11 @@ class ForeignKey extends \Michcald\Dummy\Repository\Field
         return $this->getName() . ' INT(11) NOT NULL';
     }
     
+    public function isList()
+    {
+        return true;
+    }
+    
     public function getLabel()
     {
         $label = parent::getLabel();
@@ -37,10 +42,17 @@ class ForeignKey extends \Michcald\Dummy\Repository\Field
         
         $repository = $registry->getRepository($repositoryName);
         
+        $array['repository'] = $repository->toArray();
+        
         $entities = $repository->findAll();
         
+        $mainField = $repository->getMainField()->getName();
+        
         foreach ($entities as $entity) {
-            $array['options'][] = $entity->toExposeArray();
+            $array['options'][] = array(
+                'option' => $entity->$mainField,
+                'value'  => $entity->id
+            );
         }
         
         return $array;
