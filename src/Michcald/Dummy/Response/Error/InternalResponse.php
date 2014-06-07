@@ -10,6 +10,10 @@ class InternalResponse extends AbstractResponse
         
         $this->setStatusCode(500);
         
-        $this->setMessage('Internal error');
+        if (!$message) {
+            $message = 'Internal error';
+        }
+        
+        $this->setMessage($message);
     }
 }

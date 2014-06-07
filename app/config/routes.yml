@@ -1,4 +1,13 @@
 routes:
+    
+    - name: dummy.info
+      methods: ["GET"]
+      uri:
+          pattern: api/_info
+          requirements: []
+      controller: \Michcald\Dummy\Controller\DummyController
+      action: infoAction
+    
     - name: dummy.repo.info
       methods: ["GET"]
       uri:
@@ -8,6 +17,18 @@ routes:
                 value: "[a-z0-9_]+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: infoAction
+
+    - name: dummy.repo.update
+      methods: ["PUT"]
+      uri:
+          pattern: api/{repository}/{id}
+          requirements:
+              - param: repository
+                value: "[a-z0-9_]+"
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: updateAction
 
     - name: dummy.repo.list
       methods: ["GET"]
@@ -41,18 +62,6 @@ routes:
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: createAction
 
-    - name: dummy.repo.update
-      methods: ["PUT"]
-      uri:
-          pattern: api/{repository}/{id}
-          requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
-              - param: id
-                value: \d+
-      controller: \Michcald\Dummy\Controller\RepositoryController
-      action: updateAction
-
     - name: dummy.repo.delete
       methods: ["DELETE"]
       uri:
@@ -65,36 +74,52 @@ routes:
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: deleteAction
 
-    - name: dummy.repo.cli.create
-      methods: ["CLI"]
-      uri:
-          pattern: repo:create
-          requirements: []
-      controller: \Michcald\Dummy\Controller\DummyController
-      action: createAction
-    
-    - name: dummy.repo.cli.delete
-      methods: ["CLI"]
-      uri:
-          pattern: repo:delete
-          requirements: []
-      controller: \Michcald\Dummy\Controller\DummyController
-      action: deleteAction
-
     - name: dummy.cli.info
       methods: ["CLI"]
       uri:
           pattern: info
           requirements: []
-      controller: \Michcald\Dummy\Controller\DummyController
+      controller: \Michcald\Dummy\Controller\Cli\DummyController
       action: infoAction
 
-    - name: dummy.error
-      methods: ["CLI", "GET", "POST", "PUT", "DELETE", "LINK", "UNLINK", "PATCH"]
+    - name: dummy.cli.repo.create
+      methods: ["CLI"]
+      uri:
+          pattern: dummy:repo:create
+          requirements: []
+      controller: \Michcald\Dummy\Controller\Cli\DummyController
+      action: createAction
+
+    - name: dummy.cli.repo.delete
+      methods: ["CLI"]
+      uri:
+          pattern: dummy:repo:delete
+          requirements: []
+      controller: \Michcald\Dummy\Controller\Cli\DummyController
+      action: deleteAction
+
+    - name: dummy.cli.db.install
+      methods: ["CLI"]
+      uri:
+          pattern: dummy:db:install
+          requirements: []
+      controller: \Michcald\Dummy\Controller\Cli\DbController
+      action: installAction
+
+    - name: dummy.cli.db.drop
+      methods: ["CLI"]
+      uri:
+          pattern: dummy:db:drop
+          requirements: []
+      controller: \Michcald\Dummy\Controller\Cli\DbController
+      action: dropAction
+
+    - name: default
+      methods: ["CLI", "GET", "POST", "PUT", "DELETE", "LINK", "UNLINK", "PATCH", "OPTIONS"]
       uri:
           pattern: "{any}"
           requirements:
               - param: any
                 value: ".*"
       controller: \Michcald\Dummy\Controller\RepositoryController
-      action: errorAction
+      action: defaultAction

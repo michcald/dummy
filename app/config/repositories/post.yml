@@ -1,0 +1,41 @@
+repositories:
+    - name: post
+      description: ~
+      label:
+          singular: Post
+          plural: Posts
+      parents: [post_category]
+      children: []
+      fields:
+          - name: title
+            type: string
+            label: Post title
+            description: ~
+            searchable: true
+            sortable: true
+            required: true
+            validators: []
+          - name: body
+            type: text
+            label: Post body
+            description: ~
+            searchable: true
+            sortable: true
+            required: false
+            validators: []
+          - name: img1
+            type: file
+            label: File 1
+            description: ~
+            searchable: false
+            sortable: false
+            required: true
+            validators: []
+          - name: img2
+            type: file
+            label: File 2
+            description: ~
+            searchable: false
+            sortable: false
+            required: false
+            validators: []

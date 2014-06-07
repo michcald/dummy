@@ -62,19 +62,20 @@ class Entity
 
             $fieldName = $field->getName();
 
-            if (array_key_exists($fieldName, $this->vars)) {
+            if (array_key_exists($fieldName, $this->vars) 
+                    && $this->vars[$fieldName]) {
 
-                if ($field instanceof Entity\Field\File) {
+                if ($field instanceof Repository\Field\File) {
 
                     $config = Config::getInstance();
                     
-                    $url = 'uploads/' . 
+                    $url = $config->dir['uploads'] . '/' . 
                             $this->getRepository()->getName() . '/' .
                             $this->id . '/' . $this->vars[$fieldName];
 
                     $array[$fieldName] = array(
-                        'url' => $config->base_url . '/' . $url,
-                        'size' => @filesize($url)
+                        'url' => $url,
+                        'size' => @filesize('../' . $url)
                     );
 
                     // if img write the width and the height

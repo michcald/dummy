@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Entity;
+namespace Michcald\Dummy\Repository;
 
 abstract class Field
 {
@@ -15,12 +15,10 @@ abstract class Field
     private $required = false;
 
     private $searchable = false;
+    
+    private $sortable = false;
 
-    //private $exposable = false;
-
-    //private $list = false;
-
-    //private $main = false;
+    private $validationErrors = array();
 
     private $validators = array();
 
@@ -30,6 +28,8 @@ abstract class Field
     }
     
     abstract public function getDiscriminator();
+    
+    abstract public function toSQL();
 
     public function getName()
     {
@@ -95,6 +95,23 @@ abstract class Field
     {
         return $this->searchable;
     }
+    
+    public function setSortable($sortable)
+    {
+        $this->sortable = (bool)$sortable;
+
+        return $this;
+    }
+
+    public function isSortable()
+    {
+        return $this->sortable;
+    }
+    
+    public function getValidationErrors()
+    {
+        return $this->validationErrors;
+    }
 
     public function addValidator(\Michcald\Validator $validator)
     {
@@ -102,9 +119,16 @@ abstract class Field
 
         return $this;
     }
-
+    
     public function validate($value)
     {
+        $this->validationErrors = array();
+        
+        if ($this->isRequired() && !$value) {
+            $this->validationErrors[] = 'Required field';
+            return false;
+        }
+        
         foreach ($this->validators as $validator) {
             if (!$validator->validate($value)) {
                 // define error messages
@@ -123,9 +147,23 @@ abstract class Field
             'label' => $this->getLabel(),
             'description' => $this->getDescription(),
             'required' => $this->isRequired(),
-            'searchable' => $this->isSearchable()
+            'searchable' => $this->isSearchable(),
+            'sortable' => $this->isSortable()
         );
 
         return $array;
+    }
+    
+    public function toConfigArray()
+    {
+        return array(
+            'name'        => $this->getName(),
+            'type'        => $this->getDiscriminator(),
+            'label'       => $this->getLabel(),
+            'description' => $this->getDescription(),
+            'searchable'  => $this->isSearchable(),
+            'required'    => $this->isRequired(),
+            'validators'  => array()
+        );
     }
 }

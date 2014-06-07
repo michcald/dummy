@@ -1,27 +1,64 @@
 #!/bin/bash
 
-if [ "$1" == "install" ]; then
-    rm -rf composer.phar composer.lock vendor
-    php -r "readfile('https://getcomposer.org/installer');" | php
-    php composer.phar install
-    echo "Installation completed"
-elif [ "$1" == "info" ]
-then
-    cd pub
-    php index.php info
-elif [ "$1" == "repo:create" ]
-then
-    # verify if vendor exists
-    if [ ! -d "vendor" ]; then
-        echo "Cannot proceed, run ./app/console.sh install"
-    else
+case "$1" in
+
+    'dummy:install')
+        rm -rf composer.phar composer.lock vendor
+        php -r "readfile('https://getcomposer.org/installer');" | php
+        php composer.phar install
+        echo "Installation completed"
+    ;;
+
+    'dummy:info')
         cd pub
-        php index.php repo:create
-    fi
-elif [ "$1" == "repo:delete" ]
-then
-    cd pub
-    php index.php repo:delete
-else
-    echo "Missing argument" # stampa lista comandi
-fi
+        php index.php info
+    ;;
+
+    'dummy:repo:create')
+        if [ ! -d "vendor" ]; then
+            echo "Cannot proceed, run ./app/console.sh install"
+        else
+            cd pub
+            php index.php dummy:repo:create
+        fi
+    ;;
+
+    'dummy:repo:delete')
+        cd pub
+        php index.php dummy:repo:delete
+    ;;
+
+    'dummy:db:install')
+        cd pub
+        php index.php dummy:db:install
+    ;;
+
+    'dummy:db:drop')
+        cd pub
+        php index.php dummy:db:drop
+    ;;
+
+    'dummy:app:create')
+        cd pub
+        php index.php dummy:app:create
+    ;;
+
+    'dummy:app:delete')
+        cd pub
+        php index.php dummy:app:delete
+    ;;
+
+    *)
+        echo "Command list"
+        echo "  -> dummy:install"
+        echo "  -> dummy:info"
+        echo "  -> dummy:repo:create"
+        echo "  -> dummy:repo:delete"
+        echo "  -> dummy:db:install"
+        echo "  -> dummy:db:drop"
+        echo "  -> dummy:app:create"
+        echo "  -> dummy:app:delete"
+    ;;
+
+esac
+

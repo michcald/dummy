@@ -4,39 +4,14 @@ namespace Michcald\Dummy\Controller;
 
 use Michcald\Dummy\Response\JsonResponse;
 use Michcald\Dummy\Response\Error\NotFoundResponse;
-use Michcald\Dummy\Response\Error\NotAuthorizedResponse;
 use Michcald\Dummy\Response\Error\InternalResponse as InternalErrorResponse;
 
 use Michcald\Dummy\RepositoryRegistry;
 
 class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 {
-    private function auth()
-    {
-        $user = $this->getRequest()->getHeader('PHP_AUTH_USER');
-        $password = $this->getRequest()->getHeader('PHP_AUTH_PW');
-        
-        if (!$user || !$password) {
-            return false;
-        }
-        
-        $config = \Michcald\Dummy\Config::getInstance();
-        
-        foreach ($config->auth as $auth) {
-            if ($auth['user'] == $user) {
-                return $auth['password'] == $password;
-            }
-        }
-        
-        return false;
-    }
-    
     public function infoAction($repository)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         $response = new JsonResponse();
         
         $repo = null;
@@ -53,10 +28,6 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
     public function listAction($repository)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         $page = (int) $this->getRequest()->getQueryParam('page', 1);
         $limit = (int) $this->getRequest()->getQueryParam('limit', 10);
 
@@ -97,8 +68,8 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $array = array(
             'paginator' => array(
-                'page' => $page,
-                'total' => $total
+                'page' => (int)$page,
+                'total' => (int)$total
             ),
             'results' => array()
         );
@@ -114,10 +85,6 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
     public function readAction($repository, $id)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         $response = new JsonResponse();
 
         $repo = null;
@@ -140,10 +107,6 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
     public function createAction($repository)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         $response = new JsonResponse();
 
         $repo = null;
@@ -155,18 +118,18 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         
         $data = $this->getRequest()->getData();
         
-        try {
-            $entity = $repo->create($data);
-        } catch (\Exception $e) { // ExceptionMissingField
-            $response->setStatusCode(400);
-            // crea error missing field response e exception
-            return $response;
-        }  catch (\Exception $e) { // Exception
-            return new InternalErrorResponse('Cannot create entity');
-        }
+        $entity = $repo->create($data);
         
-        if (!$entity) {
-            return new InternalErrorResponse('Cannot create entity');
+        if (!$repo->validate($entity)) {
+            $response->setStatusCode(400);
+            $response->setContent(array(
+                'error' => array(
+                    'status_code' => $response->getStatusCode(),
+                    'message'     => 'Missing fields',
+                    'fields'      => $repo->getValidationErrors()
+                )
+            ));
+            return $response;
         }
         
         $id = $repo->persist($entity);
@@ -182,10 +145,6 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
     public function updateAction($repository, $id)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         $response = new JsonResponse();
 
         $repo = null;
@@ -222,10 +181,6 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
 
     public function deleteAction($repository, $id)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         $response = new JsonResponse();
 
         $repo = null;
@@ -255,12 +210,8 @@ class RepositoryController extends \Michcald\Mvc\Controller\HttpController
         return $response;
     }
 
-    public function errorAction($any)
+    public function defaultAction($any)
     {
-        if (!$this->auth()) {
-            return new NotAuthorizedResponse();
-        }
-        
         // may be better change type of response
         return new InternalErrorResponse('No routes found');
     }

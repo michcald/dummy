@@ -14,8 +14,6 @@ class Repository
     
     private $fields = array();
     
-    private $db;
-    
     private $parents = array();
     
     private $children = array();
@@ -24,14 +22,13 @@ class Repository
     {
         $this->name = $name;
         
-        $id = new Entity\Field\Integer('id');
-        // add validation
+        $id = new Repository\Field\PrimaryKey('id');
         $this->addField($id);
     }
 
-    public function addField(Entity\Field $field)
+    public function addField(Repository\Field $field)
     {
-        $this->fields[] = $field;
+        $this->fields[$field->getName()] = $field;
 
         return $this;
     }
@@ -39,6 +36,11 @@ class Repository
     public function getFields()
     {
         return $this->fields;
+    }
+    
+    public function hasField($name)
+    {
+        return array_key_exists($name, $this->fields);
     }
 
     public function setName($name)
@@ -52,17 +54,10 @@ class Repository
     {
         return $this->name;
     }
-
-    public function setDb(\Michcald\Db\Adapter $db)
-    {
-        $this->db = $db;
-        
-        return $this;
-    }
     
     public function getDb()
     {
-        return $this->db;
+        return \Michcald\Mvc\Container::get('dummy.db');
     }
     
     public function setDescription($description)
@@ -107,7 +102,7 @@ class Repository
         
         $name = $parent . '_id';
         
-        $field = new Entity\Field\Integer($name);
+        $field = new Repository\Field\ForeignKey($name);
         $field->setLabel($parent)
                 ->setRequired(true);
         
@@ -139,22 +134,24 @@ class Repository
                 'SELECT COUNT(id) FROM ' . $this->getName());
     }
 
-    private function validate(Entity $entity)
+    public function validate(Entity $entity)
     {
+        $validated = true;
+        
         foreach ($this->fields as $field) {
 
             $fieldName = $field->getName();
 
-            if ($fieldName == 'id') {
+            if ($fieldName instanceof Repository\Field\PrimaryKey) {
                 continue;
             }
 
             if (!$field->validate($entity->$fieldName)) {
-                return false;
+                $validated = false;
             }
         }
 
-        return true;
+        return $validated;
     }
 
     public function create(array $data = null)
@@ -167,10 +164,6 @@ class Repository
                 if (array_key_exists($field->getName(), $data)) {
                     $entity->$fieldName = $data[$fieldName];
                     // TODO gestire tipo file
-                } else {
-                    if ($field->isRequired()) {
-                        throw new \Exception('Field required: ' . $fieldName);
-                    }
                 }
             }
         }
@@ -196,12 +189,23 @@ class Repository
         return $entity;
     }
     
-    public function findAll($order, $limit, $offset)
+    public function findAll($order = null, $limit = null, $offset = null)
     {
-        $rows = $this->getDb()->fetchAll(
-            'SELECT * FROM ' . $this->getName() . ' ORDER BY ' . $order
-                . ' LIMIT ' . $limit . ' OFFSET ' . $offset
-        );
+        $sql = 'SELECT * FROM ' . $this->getName();
+        
+        if ($order) {
+            $sql .= ' ORDER BY ' . $order;
+        }
+        
+        if ($limit) {
+            $sql .= ' LIMIT ' . $limit;
+        }
+        
+        if ($offset) {
+            $sql .= ' OFFSET ' . $offset;
+        }
+        
+        $rows = $this->getDb()->fetchAll($sql);
         
         $entities = array();
         
@@ -292,6 +296,16 @@ class Repository
         return $this->getDb()->fetchOne($sql);
     }
 
+    public function getValidationErrors()
+    {
+        $errors = array();
+        foreach ($this->fields as $field) {
+            $errors[$field->getName()] = $field->getValidationErrors();
+        }
+        
+        return $errors;
+    }
+    
     public function persist(Entity $entity)
     {
         if (!$this->validate($entity)) {
@@ -302,8 +316,8 @@ class Repository
         $toSaveArray = $array;
         
         foreach ($this->fields as $field) {
-            if ($field instanceof Entity\Field\File &&
-                    is_array($array[$field->getName()])) {
+            if ($field instanceof Repository\Field\File &&
+                    isset($array[$field->getName()]['tmp_name'])) {
                 
                 $filename = $toSaveArray[$field->getName()]['name'];
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -332,24 +346,24 @@ class Repository
         
         $config = Config::getInstance();
         
-        if (!is_dir($config->path['uploads_folder'] . '/' . $this->getName())) {
-            mkdir($config->path['uploads_folder'] . '/' . $this->getName());
+        if (!is_dir($config->dir['uploads'] . '/' . $this->getName())) {
+            mkdir($config->dir['uploads'] . '/' . $this->getName());
         }
         
-        $dir = $config->path['uploads_folder'] . '/' . $this->getName() . '/' . $entity->id;
+        $dir = $config->dir['uploads'] . '/' . $this->getName() . '/' . $entity->id;
         if (!is_dir($dir)) {
             mkdir($dir);
         }
         
         // verify if there's a file to save
         foreach ($this->fields as $field) {
-            if ($field instanceof Entity\Field\File && 
-                    is_array($array[$field->getName()])) {
+            if ($field instanceof Repository\Field\File && 
+                    isset($array[$field->getName()]['tmp_name'])) {
                 $fieldName = $field->getName();
                 
                 $newName = $toSaveArray[$fieldName];
                 $tmpName = $array[$fieldName]['tmp_name'];
-                
+                //is_uploaded_file($dir);
                 move_uploaded_file(
                     $tmpName, 
                     $dir . '/' . $newName
@@ -369,7 +383,7 @@ class Repository
         
         $config = Config::getInstance();
         
-        $dir = $config->path['uploads_folder'] . '/' . $this->getName() . '/' . $entity->id;
+        $dir = $config->dir['uploads'] . '/' . $this->getName() . '/' . $entity->id;
         if (is_dir($dir)) {
             $this->delTree($dir);
         }
@@ -403,5 +417,26 @@ class Repository
         }
 
         return $array;
+    }
+    
+    public function toConfigArray()
+    {
+        $config = array(
+            'name'        => $this->getName(),
+            'description' => $this->getDescription(),
+            'label'       => array(
+                'singular' => $this->getSingularLabel(),
+                'plural'   => $this->getPluralLabel()
+            ),
+            'parents'     => $this->getParents(),
+            'children'    => $this->getChildren(),
+            'fields'      => array()
+        );
+        
+        foreach ($this->fields as $field) {
+            $config['fields'][] = $field->toConfigArray();
+        }
+        
+        return $config;
     }
 }

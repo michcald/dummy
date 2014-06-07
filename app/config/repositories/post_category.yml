@@ -5,13 +5,14 @@ repositories:
           singular: Category
           plural: Categories
       parents: []
-      children: []
+      children: [post]
       fields:
           - name: name
             type: string
             label: Category name
             description: Category name descr
             searchable: true
+            sortable: true
             required: true
             validators: []
           - name: description
@@ -19,12 +20,6 @@ repositories:
             label: Category descr
             description: Category descr descr
             searchable: true
+            sortable: false
             required: false
-            validators: []
-          - name: img
-            type: file
-            label: File
-            description: ~
-            searchable: false
-            required: true
             validators: []
