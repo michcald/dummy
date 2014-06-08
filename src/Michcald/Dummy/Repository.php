@@ -17,6 +17,8 @@ class Repository
     private $parents = array();
     
     private $children = array();
+    
+    private $showable = false;
 
     public function __construct($name)
     {
@@ -126,6 +128,18 @@ class Repository
     public function getChildren()
     {
         return $this->children;
+    }
+    
+    public function setShowable($showable)
+    {
+        $this->showable = $showable;
+        
+        return $this;
+    }
+    
+    public function isShowable()
+    {
+        return $this->showable;
     }
     
     public function getMainField()
@@ -426,6 +440,7 @@ class Repository
             'description' => $this->getDescription(),
             'parents' => $this->getParents(),
             'children' => $this->getChildren(),
+            'showable' => $this->isShowable(),
             'fields' => array()
         );
 
@@ -447,6 +462,7 @@ class Repository
             ),
             'parents'     => $this->getParents(),
             'children'    => $this->getChildren(),
+            'showable'    => $this->isShowable(),
             'fields'      => array()
         );
         

@@ -52,7 +52,8 @@ if (isset($config->repositories)) {
 
         $repository->setDescription($r['description'])
                 ->setSingularLabel($r['label']['singular'])
-                ->setPluralLabel($r['label']['plural']);
+                ->setPluralLabel($r['label']['plural'])
+                ->setShowable($r['showable']);
 
         foreach ($r['parents'] as $p) {
             $repository->addParent($p);
@@ -68,12 +69,16 @@ if (isset($config->repositories)) {
                 $field = new Michcald\Dummy\Repository\Field\String($f['name']);
             } else if ($f['type'] == 'text') {
                 $field = new \Michcald\Dummy\Repository\Field\Text($f['name']);
+            } else if ($f['type'] == 'boolean') {
+                $field = new \Michcald\Dummy\Repository\Field\Boolean($f['name']);
             } else if ($f['type'] == 'file') {
                 $field = new \Michcald\Dummy\Repository\Field\File($f['name']);
             } else if ($f['type'] == 'date') {
                 $field = new \Michcald\Dummy\Repository\Field\Date($f['name']);
             } else if ($f['type'] == 'datetime') {
                 $field = new \Michcald\Dummy\Repository\Field\Datetime($f['name']);
+            } else if ($f['type'] == 'integer') {
+                $field = new \Michcald\Dummy\Repository\Field\Integer($f['name']);
             }
 
             $field->setLabel($f['label'])

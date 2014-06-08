@@ -43,6 +43,7 @@ class ForeignKey extends \Michcald\Dummy\Repository\Field
         $repository = $registry->getRepository($repositoryName);
         
         $array['repository'] = $repository->toArray();
+        $array['options'] = array();
         
         $entities = $repository->findAll();
         

@@ -43,7 +43,7 @@ class DbController extends \Michcald\Mvc\Controller\CliController
                     if ($found == 0) {
                         
                         $sql = 'ALTER TABLE ' . $repository->getName() . ' ADD COLUMN '
-                                . $repository->getName() . ' ' . $field->toSQL();
+                            . $field->toSQL();
                         
                         $queries[] = $sql;
                         

@@ -69,7 +69,11 @@ class Entity
 
                     $config = Config::getInstance();
                     
-                    $url = $config->dir['uploads'] . '/' . 
+                    // @TODO refactor
+                    $url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+                    $url = str_replace('/index.php', '', $url);
+                    
+                    $url .= '/uploads/' . 
                             $this->getRepository()->getName() . '/' .
                             $this->id . '/' . $this->vars[$fieldName];
 
