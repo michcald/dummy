@@ -152,7 +152,7 @@ abstract class Field
     {
         $this->validationErrors = array();
         
-        if ($this->isRequired() && $value === null) {
+        if ($this->isRequired() && !$value) {
             $this->validationErrors[] = 'Required field';
             return false;
         }

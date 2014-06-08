@@ -1,0 +1,20 @@
+repositories:
+    - name: marketing_img
+      description: ~
+      label:
+          singular: Immagine
+          plural: Immagini
+      parents: [marketing]
+      children: []
+      showable: false
+      fields:
+          - name: img
+            type: file
+            label: Immagine
+            description: ~
+            searchable: false
+            sortable: false
+            required: true
+            main: true
+            list: true
+            validators: []

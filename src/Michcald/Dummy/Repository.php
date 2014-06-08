@@ -407,6 +407,18 @@ class Repository
     
     public function delete(Entity $entity)
     {
+        $registry = RepositoryRegistry::getInstance();
+        
+        foreach ($this->children as $child) {
+            $r = $registry->getRepository($child);
+            $childEntities = $r->findBy(array(
+                $this->name . '_id' => (int)$entity->id
+            ));
+            foreach ($childEntities as $c) {
+                $r->delete($c);
+            }
+        }
+
         $this->getDb()->delete(
             $this->getName(),
             'id=' . (int)$entity->id
