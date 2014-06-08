@@ -104,7 +104,7 @@ repositories:
       label:
           singular: CSV Negozi
           plural: CSV Negozi
-      parents: [shop]
+      parents: []
       children: []
       showable: true 
       fields:
