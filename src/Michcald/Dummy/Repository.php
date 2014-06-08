@@ -127,7 +127,24 @@ class Repository
     
     public function getChildren()
     {
-        return $this->children;
+        $registry = RepositoryRegistry::getInstance();
+        
+        $children = array();
+        
+        foreach ($this->children as $child) {
+            
+            $repo = $registry->getRepository($child);
+            
+            $children[] = array(
+                'repository' => $child,
+                'label' => array(
+                    'singular' => $repo->getSingularLabel(),
+                    'plural'   => $repo->getPLuralLabel()
+                ),
+            );
+        }
+        
+        return $children;
     }
     
     public function setShowable($showable)
