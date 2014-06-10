@@ -153,8 +153,12 @@ abstract class Field
         $this->validationErrors = array();
         
         if ($this->isRequired() && !$value) {
-            $this->validationErrors[] = 'Required field';
-            return false;
+            if ($this->getDiscriminator() == 'boolean') {
+                $value = 0;
+            } else {
+                $this->validationErrors[] = 'Required field';
+                return false;
+            }
         }
         
         foreach ($this->validators as $validator) {
