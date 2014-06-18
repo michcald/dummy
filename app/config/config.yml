@@ -1,6 +1,0 @@
-env: dev
-
-#public_folder: ../pub
-
-dir:
-    uploads: ../pub/uploads
