@@ -13,12 +13,17 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $this->repositoryDao = new \Michcald\Dummy\App\Dao\Repository();
     }
 
-    public function listAction($repositoryName)
+    private function findRepository($repositoryName)
     {
         $repoQuery = new \Michcald\Dummy\Dao\Query();
         $repoQuery->addWhere('name', $repositoryName);
 
-        $repository = $this->repositoryDao->findOne($repoQuery);
+        return $this->repositoryDao->findOne($repoQuery);
+    }
+
+    public function listAction($repositoryName)
+    {
+        $repository = $this->findRepository($repositoryName);
 
         if (!$repository) {
             return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
@@ -32,7 +37,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $filters = $this->getRequest()->getQueryParam('filters', array());
         $orders = $this->getRequest()->getQueryParam('orders', array());
 
-        $form = new \Michcald\Dummy\App\Form\Entity\ListForm();
+        $form = new \Michcald\Dummy\App\Form\ListForm();
         $form->setRepository($repository);
 
         $form->setValues(array(
@@ -101,10 +106,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
 
     public function readAction($repositoryName, $id)
     {
-        $repoQuery = new \Michcald\Dummy\Dao\Query();
-        $repoQuery->addWhere('name', $repositoryName);
-
-        $repository = $this->repositoryDao->findOne($repoQuery);
+        $repository = $this->findRepository($repositoryName);
 
         if (!$repository) {
             return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
@@ -130,16 +132,48 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
 
     public function createAction($repositoryName)
     {
+        $repository = $this->findRepository($repositoryName);
 
+        if (!$repository) {
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+        }
+
+        $form = new \Michcald\Dummy\App\Form\Model\Entity(
+            $repository
+        );
+
+
+
+        // use the form
     }
 
     public function updateAction($repositoryName, $id)
     {
+        $repository = $this->findRepository($repositoryName);
 
+        if (!$repository) {
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+        }
+
+        $form = new \Michcald\Dummy\App\Form\Model\Entity(
+            $repository
+        );
+
+        $form->setValues($entity->toArray());
+
+        // use the form
     }
 
     public function deleteAction($repositoryName, $id)
     {
+        $repository = $this->findRepository($repositoryName);
 
+        if (!$repository) {
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+        }
+
+        $form = new \Michcald\Dummy\App\Form\Delete();
+
+        // define form->setValue and form->getValue
     }
 }

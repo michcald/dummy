@@ -34,14 +34,4 @@ class App extends \Michcald\Dummy\Dao
 
         // TODO update/create also the grants
     }
-
-    public function validate($app)
-    {
-        if (!$app->getName() || !$app->getPassword()) {
-            return false;
-        }
-
-        return true;
-    }
-
 }

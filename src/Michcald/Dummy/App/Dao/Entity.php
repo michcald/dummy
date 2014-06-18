@@ -31,18 +31,4 @@ class Entity extends \Michcald\Dummy\Dao
 
         return $entity;
     }
-
-    public function validate($entity)
-    {
-        if ($this->repository->getName() != $entity->getRepository()->getName()) {
-            return false;
-        }
-
-        // perform repository field matching
-
-        // perform validators
-
-        return true;
-    }
-
 }

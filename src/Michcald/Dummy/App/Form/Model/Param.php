@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Form;
+namespace Michcald\Dummy\Form\Model;
 
 class Param extends \Michcald\Form
 {

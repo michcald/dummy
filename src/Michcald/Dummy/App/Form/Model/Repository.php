@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Form;
+namespace Michcald\Dummy\Form\Model;
 
 class Repository extends \Michcald\Form
 {

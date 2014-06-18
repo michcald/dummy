@@ -58,10 +58,6 @@ abstract class Dao
 
     public function persist($model)
     {
-        if (!$this->validate($model)) {
-            throw new \Exception('Not valid model');
-        }
-
         if ($model->getId()) {
             $this->getDb()->update(
                 $this->getTable(),
@@ -80,23 +76,9 @@ abstract class Dao
 
     public function delete($model)
     {
-        if (!$this->validate($model)) {
-            throw new \Exception('Invalid model');
-        }
-
         $this->getDb()->delete(
             $this->getTable(),
             'id=' . (int) $model->getId()
         );
     }
-
-    public function validate($model)
-    {
-        if ($model) {
-            return true;
-        }
-
-        return false;
-    }
-
 }
