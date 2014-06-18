@@ -35,13 +35,9 @@ class Query
         return $this;
     }
 
-    final public function addLike(array $fields, $value)
+    final public function addLike($field, $value)
     {
-        foreach ($fields as $field) {
-            $this->like['fields'] = $field;
-        }
-
-        $this->like['value'] = $value;
+        $this->like[$field] = $value;
 
         return $this;
     }
@@ -76,11 +72,13 @@ class Query
 
         // putting together the likes
         $or = array();
-        foreach ($this->likes['fields'] as $field) {
+        foreach ($this->like as $field => $value) {
             $or[] = '`' . $field . '` LIKE "%' . addslashes($value) . '%"';
         }
 
-        $and[] = '(' . implode(' OR ', $or) . ')';
+        if (count($or)) {
+            $and[] = '(' . implode(' OR ', $or) . ')';
+        }
 
         return implode(' AND ', $and);
     }
@@ -101,7 +99,7 @@ class Query
 
         $where = null;
 
-        if (count($this->where) > 0 || count($this->like['fields']) > 0) {
+        if (count($this->where) > 0 || count($this->like) > 0) {
             $where .= ' WHERE ' . $this->getWhereString();
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Dao;
+namespace Michcald\Dummy\App\Dao;
 
 class Param extends \Michcald\Dummy\Dao
 {

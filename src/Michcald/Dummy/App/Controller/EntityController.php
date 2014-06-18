@@ -1,11 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Controller;
-
-use Michcald\Dummy\Response\JsonResponse;
-use Michcald\Dummy\Response\Error\NotFoundResponse;
-
-use Michcald\Dummy\RepositoryRegistry;
+namespace Michcald\Dummy\App\Controller;
 
 class EntityController extends \Michcald\Mvc\Controller\HttpController
 {
@@ -14,26 +9,31 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
 
     public function __construct()
     {
-        $this->dao = new \Michcald\Dummy\Dao\Entity();
-        $this->repositoryDao = new \Michcald\Dummy\Dao\Repository();
+        $this->dao = new \Michcald\Dummy\App\Dao\Entity();
+        $this->repositoryDao = new \Michcald\Dummy\App\Dao\Repository();
     }
 
-    public function listAction($repository)
+    public function listAction($repositoryName)
     {
-        $repo = $this->repositoryDao->find($repository);
+        $repoQuery = new \Michcald\Dummy\Dao\Query();
+        $repoQuery->addWhere('name', $repositoryName);
 
-        if (!$repo) {
-            return new NotFoundResponse('Repository not found: ' . $repository);
+        $repository = $this->repositoryDao->findOne($repoQuery);
+
+        if (!$repository) {
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
         }
 
-        $page = (int)$this->getRequest()->getQueryParam('page', 1);
-        $limit = (int)$this->getRequest()->getQueryParam('limit', 30);
+        $this->dao->setRepository($repository);
+
+        $page = $this->getRequest()->getQueryParam('page', '1');
+        $limit = $this->getRequest()->getQueryParam('limit', '30');
         $query = $this->getRequest()->getQueryParam('query', '');
         $filters = $this->getRequest()->getQueryParam('filters', array());
         $orders = $this->getRequest()->getQueryParam('orders', array());
 
-        $form = new \Michcald\Dummy\Form\Entity\ListForm();
-        $form->setRepository($repo);
+        $form = new \Michcald\Dummy\App\Form\Entity\ListForm();
+        $form->setRepository($repository);
 
         $form->setValues(array(
             'page' => $page,
@@ -51,23 +51,25 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             $paginator->setItemsPerPage($values['limit'])
                 ->setCurrentPageNumber($values['page']);
 
-            $daoQuery = new \Michcald\Dummy\DaoQuery\ListQuery();
-
-            $daoQuery->setRepository($repo)
-                ->setLimit($paginator->getLimit())
+            $entityQuery = new \Michcald\Dummy\Dao\Query();
+            $entityQuery->setLimit($paginator->getLimit())
                 ->setOffset($paginator->getOffset());
 
             foreach ($values['filters'] as $filter) {
-                $daoQuery->addWhere($filter['field'], $filter['value']);
+                $entityQuery->addWhere($filter['field'], $filter['value']);
             }
 
-            $daoQuery->setQuery($values['query']);
+            foreach ($repository->getFields() as $field) {
+                if ($field->isSearchable()) {
+                    $entityQuery->addLike($field->getName(), $values['query']);
+                }
+            }
 
             foreach ($values['orders'] as $order) {
-                $daoQuery->addOrder($order['field'], $order['direction']);
+                $entityQuery->addOrder($order['field'], $order['direction']);
             }
 
-            $daoResult = $this->dao->findBy($daoQuery);
+            $daoResult = $this->dao->findAll($entityQuery);
 
             $paginator->setTotalItems($daoResult->getTotalHits());
 
@@ -86,63 +88,57 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
                 $array['results'][] = $entity->toArray();
             }
 
-            $response = new JsonResponse();
+            $response = new \Michcald\Dummy\Response\Json();
             $response->setStatusCode(200)
-                ->setContent(json_encode($array));
+                ->setContent($array);
             return $response;
 
         } else {
-            $array = array(
-                'error' => array(
-                    'status_code' => 400,
-                    'message' => 'Wrong fields',
-                    'errors' => $form->getErrorMessages()
-                )
-            );
-
-            $response = new JsonResponse();
-            $response->setStatusCode(400)
-                ->setContent(json_encode($array));
-            return $response;
+            return new \Michcald\Dummy\Response\Json\BadRequest(
+                $form->getErrorMessages());
         }
     }
 
-    public function readAction($repository, $id)
+    public function readAction($repositoryName, $id)
     {
-        $repo = $this->repositoryDao->find($repository);
+        $repoQuery = new \Michcald\Dummy\Dao\Query();
+        $repoQuery->addWhere('name', $repositoryName);
 
-        if (!$repo) {
-            return new NotFoundResponse('Repository not found: ' . $repository);
+        $repository = $this->repositoryDao->findOne($repoQuery);
+
+        if (!$repository) {
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
         }
 
-        $daoQuery = new \Michcald\Dummy\DaoQuery\FindQuery();
-        $daoQuery->setRepository($repo)
-            ->setId($id);
+        $this->dao->setRepository($repository);
 
-        $entity = $this->dao->find($daoQuery);
+        $entityQuery = new \Michcald\Dummy\Dao\Query();
+        $entityQuery->addWhere('id', $id);
+
+        $entity = $this->dao->findOne($entityQuery);
 
         if (!$entity) {
-            return new NotFoundResponse('Entity not found: ' . $id);
+            return new \Michcald\Dummy\Response\Json\NotFound('Entity not found: ' . $id);
         }
 
-        $response = new JsonResponse();
+        $response = new \Michcald\Dummy\Response\Json();
         $response->setStatusCode(200)
-            ->setContent(json_encode($entity->toArray()));
+            ->setContent($entity->toArray());
 
         return $response;
     }
 
-    public function createAction($repository)
+    public function createAction($repositoryName)
     {
 
     }
 
-    public function updateAction($repository, $id)
+    public function updateAction($repositoryName, $id)
     {
 
     }
 
-    public function deleteAction($repository, $id)
+    public function deleteAction($repositoryName, $id)
     {
 
     }

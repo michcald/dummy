@@ -1,8 +1,8 @@
 <?php
 
-namespace Michcald\Dummy\Event\Listener;
+namespace Michcald\Dummy\App\Event\Listener;
 
-use Michcald\Dummy\Response\Error\NotAuthorizedResponse;
+use Michcald\Dummy\Response\Json\NotAuthorized;
 
 class Auth implements \Michcald\Mvc\Event\SubscriberInterface
 {
@@ -24,19 +24,34 @@ class Auth implements \Michcald\Mvc\Event\SubscriberInterface
         $user = $request->getHeader('PHP_AUTH_USER', false);
         $password = sha1($request->getHeader('PHP_AUTH_PW', false));
 
-        $db = \Michcald\Mvc\Container::get('dummy.db');
+        // validate input
+        $form = new \Michcald\Dummy\App\Form\Auth();
+        $form->setValues(array(
+            'user' => $user,
+            'password' => $password
+        ));
 
-        $apps = $db->fetchAll('SELECT name,password FROM meta_app');
-
-        foreach ($apps as $app) {
-            if ($user == $app['name'] && $password == $app['password']) {
-                return;
-            }
+        if (!$form->isValid()) {
+            $response = new \Michcald\Dummy\Response\Json\BadRequest($form->getErrorMessages());
+            $response->send();
+            die();
         }
 
-        $response = new NotAuthorizedResponse();
-        $response->send();
-        die();
+        $values = $form->getValues();
+
+        $appDao = new \Michcald\Dummy\App\Dao\App();
+
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('name', $values['user'])
+            ->addWhere('password', sha1($values['password']));
+
+        $app = $appDao->findOne($query);
+
+        if (!$app) {
+            $response = new NotAuthorized();
+            $response->send();
+            die();
+        }
     }
 
 }

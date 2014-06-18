@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Form\Entity;
+namespace Michcald\Dummy\App\Form\Entity;
 
 class ListForm extends \Michcald\Form
 {
@@ -8,20 +8,16 @@ class ListForm extends \Michcald\Form
 
     public function __construct()
     {
-        $reqVal = new \Michcald\Validator\NotEmpty();
-
-        $val1 = new \Michcald\Validator\Number\Int();
-        $val1->setMin(0);
+        $val1 = new \Michcald\Validator\String();
+        $val1->setRegex('\d+');
 
         $page = new \Michcald\Form\Element\Number();
         $page->setName('page')
-            ->addValidator($reqVal)
             ->addValidator($val1);
         $this->addElement($page);
 
         $limit = new \Michcald\Form\Element\Number();
         $limit->setName('limit')
-            ->addValidator($reqVal)
             ->addValidator($val1);
         $this->addElement($limit);
 
@@ -38,7 +34,7 @@ class ListForm extends \Michcald\Form
         $this->addElement($orders);
     }
 
-    public function setRepository(\Michcald\Dummy\Model\Repository $repository)
+    public function setRepository(\Michcald\Dummy\App\Model\Repository $repository)
     {
         $this->repository = $repository;
 
@@ -47,6 +43,8 @@ class ListForm extends \Michcald\Form
 
     public function isValid()
     {
+        $valid = parent::isValid();
+
         $values = $this->getValues();
 
         if (array_key_exists('filters', $values)) {
@@ -89,6 +87,6 @@ class ListForm extends \Michcald\Form
             }
         }
 
-        return parent::isValid();
+        return $valid;
     }
 }

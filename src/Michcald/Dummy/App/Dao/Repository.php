@@ -2,8 +2,6 @@
 
 namespace Michcald\Dummy\App\Dao;
 
-use Michcald\Dummy\Model\Repository\Field;
-
 class Repository extends \Michcald\Dummy\Dao
 {
     public function getTable()
@@ -11,7 +9,7 @@ class Repository extends \Michcald\Dummy\Dao
         return 'meta_repository';
     }
 
-    public function persist(\Michcald\Dummy\App\Model\Repository $repository)
+    public function persist($repository)
     {
         parent::persist($repository);
 
@@ -31,7 +29,7 @@ class Repository extends \Michcald\Dummy\Dao
 
     public function create(array $row = null)
     {
-        $repository = new \Michcald\Dummy\Model\Repository();
+        $repository = new \Michcald\Dummy\App\Model\Repository();
 
         if ($repository) {
             $repository

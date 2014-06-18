@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Dao;
+namespace Michcald\Dummy\App\Dao;
 
 class App extends \Michcald\Dummy\Dao
 {
@@ -23,19 +23,19 @@ class App extends \Michcald\Dummy\Dao
         return $app;
     }
 
-    public function delete(\Michcald\Dummy\App\Model\App $app)
+    public function delete($app)
     {
         // TODO delete all the grants
     }
 
-    public function persist(\Michcald\Dummy\App\Model\App $app)
+    public function persist($app)
     {
         parent::persist($app);
 
         // TODO update/create also the grants
     }
 
-    public function validate(\Michcald\Dummy\App\Model\App $app)
+    public function validate($app)
     {
         if (!$app->getName() || !$app->getPassword()) {
             return false;

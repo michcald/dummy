@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\App;
+namespace Michcald\Dummy\Dao;
 
 class Result
 {

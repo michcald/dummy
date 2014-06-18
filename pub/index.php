@@ -39,7 +39,7 @@ $db = new Michcald\Db\Adapter(
 
 \Michcald\Mvc\Container::add('dummy.db', $db);
 
-$mvc->addEventSubscriber(new \Michcald\Dummy\Event\Listener\Auth());
+$mvc->addEventSubscriber(new \Michcald\Dummy\App\Event\Listener\Auth());
 
 $request = new \Michcald\Dummy\Request();
 

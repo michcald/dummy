@@ -20,7 +20,7 @@ class Entity extends \Michcald\Dummy\Dao
 
     public function create(array $row = null)
     {
-        $entity = new \Michcald\Dummy\Model\Entity();
+        $entity = new \Michcald\Dummy\App\Model\Entity();
         $entity->setRepository($this->repository);
 
         if ($row) {

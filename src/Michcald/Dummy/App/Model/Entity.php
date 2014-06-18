@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Model;
+namespace Michcald\Dummy\App\Model;
 
 class Entity extends \Michcald\Dummy\Model
 {
@@ -112,7 +112,10 @@ class Entity extends \Michcald\Dummy\Model
 
     public function toArray()
     {
-        return $this->vars;
+        $array = array();
+        $array['id'] = (int) $this->getId();
+
+        return array_merge($array, $this->vars);
     }
 
 }

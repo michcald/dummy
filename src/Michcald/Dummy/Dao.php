@@ -14,7 +14,15 @@ abstract class Dao
 
     final public function findOne(\Michcald\Dummy\Dao\Query $query)
     {
-        $result = $this->getDb()->fetchRow($query->getSql());
+        $query->setTable($this->getTable());
+
+        $selectQuery = $query->getSelectQuery();
+
+        try {
+            $result = $this->getDb()->fetchRow($selectQuery);
+        } catch (\Exception $e) {
+            return null;
+        }
 
         if (!$result) {
             return null;
@@ -25,13 +33,15 @@ abstract class Dao
 
     final public function findAll(\Michcald\Dummy\Dao\Query $query)
     {
+        $query->setTable($this->getTable());
+
         $countQuery = $query->getCountQuery();
         $totalHits = $this->getDb()->fetchOne($countQuery);
 
         $selectQuery = $query->getSelectQuery();
         $results = $this->getDb()->fetchAll($selectQuery);
 
-        $daoResult = new \Michcald\Dummy\DaoResult();
+        $daoResult = new \Michcald\Dummy\Dao\Result();
         $daoResult->setTotalHits($totalHits);
 
         foreach ($results as $result) {
@@ -46,7 +56,7 @@ abstract class Dao
 
     abstract public function getTable();
 
-    public function persist(Model $model)
+    public function persist($model)
     {
         if (!$this->validate($model)) {
             throw new \Exception('Not valid model');
@@ -68,7 +78,7 @@ abstract class Dao
         }
     }
 
-    public function delete(Model $model)
+    public function delete($model)
     {
         if (!$this->validate($model)) {
             throw new \Exception('Invalid model');
@@ -80,7 +90,7 @@ abstract class Dao
         );
     }
 
-    public function validate(Model $model = null)
+    public function validate($model)
     {
         if ($model) {
             return true;
