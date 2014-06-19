@@ -12,7 +12,7 @@ abstract class Dao
         return \Michcald\Mvc\Container::get('dummy.db');
     }
 
-    final public function findOne(\Michcald\Dummy\Dao\Query $query)
+    public function findOne(\Michcald\Dummy\Dao\Query $query)
     {
         $query->setTable($this->getTable());
 
@@ -28,10 +28,14 @@ abstract class Dao
             return null;
         }
 
-        return $this->create($result);
+        $model = $this->create($result);
+
+        $model->setId($result['id']);
+
+        return $model;
     }
 
-    final public function findAll(\Michcald\Dummy\Dao\Query $query)
+    public function findAll(\Michcald\Dummy\Dao\Query $query)
     {
         $query->setTable($this->getTable());
 

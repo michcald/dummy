@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\App\Form\Entity;
+namespace Michcald\Dummy\App\Form;
 
 class ListForm extends \Michcald\Form
 {

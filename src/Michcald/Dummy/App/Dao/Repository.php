@@ -9,6 +9,24 @@ class Repository extends \Michcald\Dummy\Dao
         return 'meta_repository';
     }
 
+    public function findOne(\Michcald\Dummy\Dao\Query $query)
+    {
+        $repository = parent::findOne($query);
+
+        $fieldDao = new Repository\Field();
+
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $repository->getId());
+
+        $result = $fieldDao->findAll($query);
+        
+        foreach ($result->getResults() as $field) {
+            $repository->addField($field);
+        }
+
+        return $repository;
+    }
+
     public function persist($repository)
     {
         parent::persist($repository);

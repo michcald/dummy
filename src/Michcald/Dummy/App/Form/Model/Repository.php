@@ -10,7 +10,7 @@ class Repository extends \Michcald\Form
 
         $nameVal = new \Michcald\Validator\String();
         $nameVal->setMax(255)
-            ->setRegex('[a-z0-9_]*');
+            ->setRegex('^[a-z0-9_]*$');
 
         $name = new \Michcald\Form\Element\Text();
         $name->setName('name')

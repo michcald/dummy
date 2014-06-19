@@ -138,9 +138,33 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
         }
 
+        $this->dao->setRepository($repository);
+
         $form = new \Michcald\Dummy\App\Form\Model\Entity(
             $repository
         );
+
+        $form->setValues($this->getRequest()->getData());
+
+        if ($form->isValid()) {
+
+            $entity = $this->dao->create($form->getValues());
+
+            $this->dao->persist($entity);
+
+            $response = new \Michcald\Dummy\Response\Json();
+            $response->setStatusCode(201)
+                ->setContent($entity->getId());
+
+            return $response;
+
+        } else {
+
+            return new \Michcald\Dummy\Response\Json\BadRequest(
+                $form->getErrorMessages()
+            );
+
+        }
 
 
 
@@ -172,8 +196,23 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
         }
 
-        $form = new \Michcald\Dummy\App\Form\Delete();
+        $this->dao->setRepository($repository);
 
-        // define form->setValue and form->getValue
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('id', $id);
+
+        $entity = $this->dao->findOne($query);
+
+        if (!$entity) {
+            return new \Michcald\Dummy\Response\Json\NotFound('Entity not found: ' . $id);
+        }
+
+        $this->dao->delete($entity);
+
+        $response = new \Michcald\Dummy\Response\Json();
+
+        $response->setStatusCode(204);
+
+        return $response;
     }
 }

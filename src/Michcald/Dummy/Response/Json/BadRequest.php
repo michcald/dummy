@@ -8,7 +8,7 @@ class BadRequest extends \Michcald\Dummy\Response\Json
     {
         parent::__construct();
 
-        $this->setStatusCode(500);
+        $this->setStatusCode(400);
 
         if (!$message) {
             $message = 'Bad request';

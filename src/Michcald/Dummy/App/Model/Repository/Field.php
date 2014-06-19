@@ -2,7 +2,7 @@
 
 namespace Michcald\Dummy\App\Model\Repository;
 
-abstract class Field extends \Michcald\Dummy\Model
+class Field extends \Michcald\Dummy\Model
 {
     private $name;
 
@@ -21,10 +21,6 @@ abstract class Field extends \Michcald\Dummy\Model
     private $list = false;
 
     private $displayOrder;
-
-    abstract public function getDiscriminator();
-
-    abstract public function toSQL();
 
     public function setName($name)
     {
