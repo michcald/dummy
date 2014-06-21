@@ -1,52 +1,42 @@
 routes:
     
-    # entity
+    # app
     
-    - name: dummy.entity.list
+    - name: dummy.app.list
       methods: ["GET"]
       uri:
-          pattern: "{repositoryName}"
-          requirements:
-              - param: repositoryName
-                value: "[a-z0-9_]*"
-      controller: \Michcald\Dummy\App\Controller\EntityController
+          pattern: app
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\AppController
       action: listAction
     
-    - name: dummy.entity.read
+    - name: dummy.app.read
       methods: ["GET"]
       uri:
-          pattern: "{repositoryName}/{id}"
+          pattern: app/{id}
           requirements:
-              - param: repositoryName
-                value: "[a-z0-9_]*"
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\EntityController
+      controller: \Michcald\Dummy\App\Controller\AppController
       action: readAction
 
-    - name: dummy.entity.create
+    - name: dummy.app.create
       methods: ["POST"]
       uri:
-          pattern: "{repositoryName}"
-          requirements:
-              - param: repositoryName
-                value: "[a-z0-9_]*"
-      controller: \Michcald\Dummy\App\Controller\EntityController
+          pattern: app
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\AppController
       action: createAction
 
-    - name: dummy.entity.delete
+    - name: dummy.app.delete
       methods: ["DELETE"]
       uri:
-          pattern: "{repositoryName}/{id}"
+          pattern: app/{id}
           requirements:
-              - param: repositoryName
-                value: "[a-z0-9_]*"
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\EntityController
+      controller: \Michcald\Dummy\App\Controller\AppController
       action: deleteAction
-    
-    
     
     # repository
     
@@ -95,3 +85,61 @@ routes:
                 value: "[a-z0-9_]*"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: deleteAction
+    
+    # entity
+    
+    - name: dummy.entity.list
+      methods: ["GET"]
+      uri:
+          pattern: "{repositoryName}"
+          requirements:
+              - param: repositoryName
+                value: "[a-z0-9_]*"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: listAction
+    
+    - name: dummy.entity.read
+      methods: ["GET"]
+      uri:
+          pattern: "{repositoryName}/{id}"
+          requirements:
+              - param: repositoryName
+                value: "[a-z0-9_]*"
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: readAction
+
+    - name: dummy.entity.create
+      methods: ["POST"]
+      uri:
+          pattern: "{repositoryName}"
+          requirements:
+              - param: repositoryName
+                value: "[a-z0-9_]*"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: createAction
+
+    - name: dummy.entity.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: "{repositoryName}/{id}"
+          requirements:
+              - param: repositoryName
+                value: "[a-z0-9_]*"
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: deleteAction
+
+    # default
+    
+    - name: dummy.not_found
+      methods: ["GET","POST","PUT","DELETE","OPTIONS","PATCH","HEAD"]
+      uri:
+          pattern: "{any}"
+          requirements:
+              - param: any
+                value: ".*"
+      controller: \Michcald\Dummy\App\Controller\DummyController
+      action: notFoundAction

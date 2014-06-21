@@ -1,8 +1,8 @@
 <?php
 
-namespace Michcald\Dummy;
+namespace Michcald\Dummy\Controller;
 
-abstract class Controller extends \Michcald\Mvc\Controller\HttpController
+abstract class Crud extends \Michcald\Mvc\Controller\HttpController
 {
     abstract public function createAction();
 

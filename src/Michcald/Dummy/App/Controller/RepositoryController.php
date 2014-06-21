@@ -1,11 +1,11 @@
 <?php
 
-namespace Michcald\Dummy\Controller;
+namespace Michcald\Dummy\App\Controller;
 
 use Michcald\Dummy\Response\JsonResponse;
 use Michcald\Dummy\Response\Error\NotFoundResponse;
 
-class RepositoryController extends \Michcald\Dummy\Controller
+class RepositoryController extends \Michcald\Dummy\Controller\Crud
 {
     private $dao;
 
