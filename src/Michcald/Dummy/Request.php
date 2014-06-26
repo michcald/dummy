@@ -12,12 +12,12 @@ class Request extends \Michcald\Mvc\Request
             $this->buildHttpRequest();
         }
     }
-    
+
     private function buildCliRequest()
     {
         global $argv;
         global $argc;
-        
+
         $uri = isset($argv[1]) ? $argv[1] : '';
 
         $query = array();
@@ -35,6 +35,15 @@ class Request extends \Michcald\Mvc\Request
         $uri = str_replace('pub/index.php', '', $_SERVER['PHP_SELF']);
         $uri = str_replace($uri, '', $_SERVER['REQUEST_URI']);
         $uri = str_replace('?' . $_SERVER['QUERY_STRING'], '', $uri);
+        // remove / at the beginning and at the end
+        if ($uri{0} == '/') {
+            $uri = substr($uri, 1);
+        }
+
+        $length = strlen($uri);
+        if ($uri{$length-1} == '/') {
+            $uri = substr($uri, 0, $length-1);
+        }
 
         $this->setMethod($_SERVER['REQUEST_METHOD'])
             ->setQueryParams($_GET)

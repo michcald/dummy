@@ -51,10 +51,10 @@ routes:
     - name: dummy.repository.read
       methods: ["GET"]
       uri:
-          pattern: repository/{name}
+          pattern: repository/{id}
           requirements:
-              - param: name
-                value: "[a-z0-9_]*"
+              - param: id
+                value: "\d+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: readAction
     
@@ -69,20 +69,70 @@ routes:
     - name: dummy.repository.update
       methods: ["PUT"]
       uri:
-          pattern: repository/{name}
+          pattern: repository/{id}
           requirements:
-              - param: name
-                value: "[a-z0-9_]*"
+              - param: id
+                value: "\d+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: updateAction
       
     - name: dummy.repository.delete
       methods: ["DELETE"]
       uri:
-          pattern: repository/{name}
+          pattern: repository/{id}
           requirements:
-              - param: name
-                value: "[a-z0-9_]*"
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: deleteAction
+
+    # repository
+    
+    - name: dummy.repository.field.create
+      methods: ["POST"]
+      uri:
+          pattern: repository/field
+          requirements: []
+      controller: \Michcald\Dummy\Controller\Repository\FieldController
+      action: createAction
+    
+    - name: dummy.repository.field.read
+      methods: ["GET"]
+      uri:
+          pattern: repository/field/{id}
+          requirements:
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\Controller\Repository\FieldController
+      action: readAction
+    
+    - name: dummy.repository.field.list
+      methods: ["GET"]
+      uri:
+          pattern: repository/{repositoryId}/field
+          requirements:
+              - param: repositoryId
+                value: "\d+"
+      controller: \Michcald\Dummy\Controller\Repository\FieldController
+      action: listAction
+      
+    - name: dummy.repository.field.update
+      methods: ["PUT"]
+      uri:
+          pattern: repository/field/{id}
+          requirements:
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\Controller\RepositoryController
+      action: updateAction
+      
+    - name: dummy.repository.field.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: repository/field/{id}
+          requirements:
+              - param: id
+                value: "\d+"
       controller: \Michcald\Dummy\Controller\RepositoryController
       action: deleteAction
     

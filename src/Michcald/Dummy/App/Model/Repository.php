@@ -14,10 +14,6 @@ class Repository extends \Michcald\Dummy\Model
 
     private $fields = array();
 
-    private $parents = array();
-
-    private $children = array();
-
     public function addField(Repository\Field $field)
     {
         $this->fields[$field->getName()] = $field;
@@ -83,51 +79,10 @@ class Repository extends \Michcald\Dummy\Model
         return $this->pluralLabel;
     }
 
-    public function addParent($parent)
-    {
-        $this->parents[] = $parent;
-
-        return $this;
-    }
-
-    public function getParents()
-    {
-        return $this->parents;
-    }
-
-    public function addChild($child)
-    {
-        $this->children[] = $child;
-
-        return $this;
-    }
-
-    public function getChildren()
-    {
-        /*
-        $registry = RepositoryRegistry::getInstance();
-
-        $children = array();
-
-        foreach ($this->children as $child) {
-
-            $repo = $registry->getRepository($child);
-
-            $children[] = array(
-                'repository' => $child,
-                'label' => array(
-                    'singular' => $repo->getSingularLabel(),
-                    'plural'   => $repo->getPLuralLabel()
-                ),
-            );
-        }
-
-        return $children;*/
-    }
-
     public function toArray()
     {
         $array = array(
+            'id' => $this->getId(),
             'name' => $this->getName(),
             'label' => array(
                 'singular' => $this->getSingularLabel(),

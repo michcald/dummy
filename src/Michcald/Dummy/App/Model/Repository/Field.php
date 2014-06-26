@@ -168,6 +168,7 @@ class Field extends \Michcald\Dummy\Model
     public function toArray()
     {
         $array = array(
+            'id' => $this->getId(),
             'name' => $this->getName(),
             'type' => $this->getDiscriminator(),
             'label' => $this->getLabel(),

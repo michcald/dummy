@@ -19,7 +19,7 @@ class Repository extends \Michcald\Dummy\Dao
         $query->addWhere('repository_id', $repository->getId());
 
         $result = $fieldDao->findAll($query);
-        
+
         foreach ($result->getResults() as $field) {
             $repository->addField($field);
         }
@@ -60,13 +60,13 @@ class Repository extends \Michcald\Dummy\Dao
             // parents
             $parents = json_decode($row['parents'], true);
             foreach ($parents as $parent) {
-                $repository->addParent($parent);
+                //$repository->addParent($parent);
             }
 
             // children
             $children = json_decode($row['children'], true);
             foreach ($children as $child) {
-                $repository->addChild($child);
+                //$repository->addChild($child);
             }
 
             // TODO load all the fields

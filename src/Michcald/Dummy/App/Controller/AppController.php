@@ -13,7 +13,28 @@ class AppController extends \Michcald\Dummy\Controller\Crud
 
     public function createAction()
     {
+        $form = new \Michcald\Dummy\App\Form\Model\App();
 
+        $form->setValues($this->getRequest()->getData());
+
+        if ($form->isValid()) {
+
+            $app = $this->dao->create($form->getValues());
+
+            $this->dao->persist($app);
+
+            $response = new \Michcald\Dummy\Response\Json();
+            $response->setStatusCode(201)
+                ->setContent($app->getId());
+
+            return $response;
+
+        } else {
+
+            return new \Michcald\Dummy\Response\Json\BadRequest(
+                $form->getErrorMessages()
+            );
+        }
     }
 
     public function deleteAction($id)
@@ -39,11 +60,20 @@ class AppController extends \Michcald\Dummy\Controller\Crud
     public function listAction()
     {
         $query = new \Michcald\Dummy\Dao\Query();
-        $query->addOrder('name', 'ASC');
+        $query->addOrder('name', 'ASC')
+            ->setLimit(1000);
 
-        $apps = $this->dao->findAll($query);
+        $result = $this->dao->findAll($query);
 
-        return $apps;
+        $array = array();
+        foreach ($result->getResults() as $app) {
+            $array[] = $app->toArray();
+        }
+
+        $response = new \Michcald\Dummy\Response\Json();
+        $response->setContent($array);
+
+        return $response;
     }
 
     public function readAction($id)

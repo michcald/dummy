@@ -165,10 +165,6 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             );
 
         }
-
-
-
-        // use the form
     }
 
     public function updateAction($repositoryName, $id)

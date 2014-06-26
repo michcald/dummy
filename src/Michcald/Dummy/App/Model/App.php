@@ -49,6 +49,7 @@ class App extends \Michcald\Dummy\Model
     public function toArray()
     {
         return array(
+            'id' => (int)$this->getId(),
             'name' => $this->name,
             'description' => $this->description
         );

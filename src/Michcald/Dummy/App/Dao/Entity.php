@@ -24,6 +24,8 @@ class Entity extends \Michcald\Dummy\Dao
         $entity->setRepository($this->repository);
 
         if ($row) {
+            $entity->setId($row['id']);
+            unset($row['id']);
             $entity->setValues($row);
         }
 
