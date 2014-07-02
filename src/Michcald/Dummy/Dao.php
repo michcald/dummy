@@ -5,7 +5,7 @@ namespace Michcald\Dummy;
 abstract class Dao
 {
     /**
-     * @return \Michcald\Db\Adapter
+     * @return \PDO
      */
     final public function getDb()
     {
@@ -19,7 +19,9 @@ abstract class Dao
         $selectQuery = $query->getSelectQuery();
 
         try {
-            $result = $this->getDb()->fetchRow($selectQuery);
+            $statement = $this->getDb()->prepare($selectQuery);
+            $statement->execute();
+            $result = $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return null;
         }
@@ -40,10 +42,16 @@ abstract class Dao
         $query->setTable($this->getTable());
 
         $countQuery = $query->getCountQuery();
-        $totalHits = $this->getDb()->fetchOne($countQuery);
+        $statement = $this->getDb()->prepare($countQuery);
+        $statement->execute();
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
+        $totalHits = $result['count'];
 
         $selectQuery = $query->getSelectQuery();
-        $results = $this->getDb()->fetchAll($selectQuery);
+
+        $statement = $this->getDb()->prepare($selectQuery);
+        $statement->execute();
+        $results = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
         $daoResult = new \Michcald\Dummy\Dao\Result();
         $daoResult->setTotalHits($totalHits);

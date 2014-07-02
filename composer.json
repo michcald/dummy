@@ -16,8 +16,8 @@
     "require": {
         "php": ">=5.3.0",
         "symfony/yaml": "2.3.*@dev",
+        "monolog/monolog": "1.10.*@dev",
         "michcald/mvc": "dev-master",
-        "michcald/db": "dev-master",
         "michcald/form": "dev-master",
         "michcald/validator": "dev-master",
         "michcald/paginator": "dev-master"
@@ -32,10 +32,6 @@
         {
             "type": "vcs",
             "url":  "git@github.com:michcald/mvc.git"
-        },
-        {
-            "type": "vcs",
-            "url":  "git@github.com:michcald/db.git"
         },
         {
             "type": "vcs",

@@ -121,6 +121,6 @@ class Query
 
     final public function getCountQuery()
     {
-        return 'SELECT COUNT(id) ' . $this->getQuery();
+        return 'SELECT COUNT(id) count ' . $this->getQuery();
     }
 }
