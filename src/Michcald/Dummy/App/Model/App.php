@@ -51,7 +51,8 @@ class App extends \Michcald\Dummy\Model
         return array(
             'id' => (int)$this->getId(),
             'name' => $this->name,
-            'description' => $this->description
+            'description' => $this->description,
+            'password' => $this->password
         );
     }
 

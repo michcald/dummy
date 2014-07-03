@@ -15,8 +15,10 @@ class BadRequest extends \Michcald\Dummy\Response\Json
         }
 
         parent::setContent(array(
-            'status_code' => $this->getStatusCode(),
-            'message' => $message
+            'error' => array(
+                'status_code' => $this->getStatusCode(),
+                'message' => $message
+            )
         ));
     }
 }

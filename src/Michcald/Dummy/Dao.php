@@ -71,26 +71,62 @@ abstract class Dao
     public function persist($model)
     {
         if ($model->getId()) {
-            $this->getDb()->update(
-                $this->getTable(),
-                $model->toArray(),
-                'id=' . (int)$model->getId()
-            );
-        } else {
-            $id = $this->getDb()->insert(
-                $this->getTable(),
-                $model->toArray()
-            );
+            $updateSql = sprintf('UPDATE %s SET ', $this->getTable());
 
-            $model->setId($id);
+            $chunks = array();
+            foreach ($model->toArray() as $key => $value) {
+                $chunks[] = sprintf('`%s`=?', $key);
+            }
+
+            $updateSql .= implode(',', $chunks);
+
+            $s = $this->getDb()->prepare($updateSql);
+            $s->execute(array_values($model->toArray()));
+
+        } else {
+
+            $updateSql = sprintf('INSERT INTO %s ', $this->getTable());
+
+            $chunks = array();
+            foreach ($model->toArray() as $key => $value) {
+                $chunks[] = sprintf('`%s`', $key);
+            }
+
+            $updateSql .= '(' . implode(',', $chunks) . ') VALUES (';
+
+            $chunks = array();
+            foreach ($model->toArray() as $key => $value) {
+                $chunks[] = '?';
+            }
+
+            $updateSql .= implode(',', $chunks) . ');';
+
+            $s = $this->getDb()->prepare($updateSql);
+            $s->execute(array_values($model->toArray()));
+
+            // last insert id
+            /*$stm = $this->getDb()->prepare(
+                sprintf('SELECT MAX(id) FROM %s', $this->getTable())
+            );
+            $stm->execute();
+            $row = $stm->fetch();*/
+
+            if (!$s) {
+                throw new \Exception($this->getDb()->errorInfo());
+            }
+
+            $model->setId($this->getDb()->lastInsertId());
         }
     }
 
     public function delete($model)
     {
-        $this->getDb()->delete(
-            $this->getTable(),
-            'id=' . (int) $model->getId()
+        $this->getDb()->query(
+            sprintf(
+                'DELETE FROM %s WHERE id=%d',
+                $this->getTable(),
+                $model->getId()
+            )
         );
     }
 }

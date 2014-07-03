@@ -4,7 +4,11 @@ namespace Michcald\Dummy\App\Form;
 
 class ListForm extends \Michcald\Form
 {
-    private $repository;
+    private $extraErrors = array();
+
+    private $filters = array();
+
+    private $orders = array();
 
     public function __construct()
     {
@@ -34,9 +38,16 @@ class ListForm extends \Michcald\Form
         $this->addElement($orders);
     }
 
-    public function setRepository(\Michcald\Dummy\App\Model\Repository $repository)
+    public function setFilters(array $filters)
     {
-        $this->repository = $repository;
+        $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function setOrders(array $orders)
+    {
+        $this->orders = $orders;
 
         return $this;
     }
@@ -49,17 +60,20 @@ class ListForm extends \Michcald\Form
 
         if (array_key_exists('filters', $values)) {
 
-            if (!is_array($values)) {
+            if (!is_array($values['filters'])) {
+                $this->extraErrors[] = 'filters must be an array';
                 return false;
             }
 
             foreach ($values['filters'] as $filter) {
                 if (!array_key_exists('field', $filter) ||
                     !array_key_exists('value', $filter)) {
+                    $this->extraErrors[] = sprintf('Filter "%s" must contain field and value', $filter['field']);
                     return false;
                 }
 
-                if (!$this->repository->hasField($filter['field'])) {
+                if (!in_array($filter['field'], $this->filters)) {
+                    $this->extraErrors[] = sprintf('Filter "%s" not valid', $filter['field']);
                     return false;
                 }
             }
@@ -67,26 +81,38 @@ class ListForm extends \Michcald\Form
 
         if (array_key_exists('orders', $values)) {
 
-            if (!is_array($values)) {
+            if (!is_array($values['orders'])) {
+                $this->extraErrors[] = 'orders must be an array';
                 return false;
             }
 
             foreach ($values['orders'] as $filter) {
                 if (!array_key_exists('field', $filter) ||
                     !array_key_exists('direction', $filter)) {
+                    $this->extraErrors[] = 'orders must contain field and direction';
                     return false;
                 }
 
-                if (!$this->repository->hasField($filter['field'])) {
+                if (!in_array($filter['field'], $this->orders)) {
+                    $this->extraErrors[] = sprintf('Order "%s" not valid', $filter['fields']);
                     return false;
                 }
 
                 if (!in_array(strtolower($filter['direction']), array('asc', 'desc'))) {
+                    $this->extraErrors[] = sprintf('Order "%s" not valid direction %s', $filter['fields'], $filter['direction']);
                     return false;
                 }
             }
         }
 
         return $valid;
+    }
+
+    public function getErrorMessages()
+    {
+        return array_merge_recursive(
+            parent::getErrorMessages(),
+            $this->extraErrors
+        );
     }
 }

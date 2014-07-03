@@ -1,62 +1,111 @@
 <?php
 
-class AppTest extends PHPUnit_Framework_TestCase
+include 'tests/TestController.php';
+
+class AppTest extends TestController
 {
-    const BASE_URL = 'http://localhost/dummy2/dummy2/';
-
-    private $client;
-
-    public function __construct($name = NULL, array $data = array(), $dataName = '')
+    public function getUri()
     {
-        parent::__construct($name, $data, $dataName);
-
-        $auth = new Michcald\RestClient\Auth\Basic();
-        $auth->setUsername('michael')
-            ->setPassword('michael');
-
-        $this->client = new \Michcald\RestClient\Client();
-        //$this->client->setAuth($auth);
+        return 'app';
     }
 
-    private function call($method, $uri, array $params = array())
+    public function getFields()
     {
-        $url = self::BASE_URL . $uri . '/';
-
-        switch ($method) {
-            case 'get':
-                return $this->client->get($url, $params);
-            case 'post':
-                return $this->client->post($url, $params);
-            case 'put':
-                return $this->client->put($url, $params);
-            case 'delete':
-                return $this->client->delete($url, $params);
-            default:
-                throw new \Exception('Invalid method');
-        }
+        return array(
+            'name',
+            'description',
+            'password'
+        );
     }
 
-    private function assertResponse(Michcald\RestClient\Response $response,
-        $expectedStatusCode, $expectedContentType = 'application/json')
+    public function getBadItems()
     {
-        $this->assertEquals(200, $response->getStatusCode());
+        return array(
+            array(
+                'name' => 'Test App', // only a-z0-9_
+                'description' => 'Description Test',
+                'password' => 'test_password'
+            ),
+            array(
+                'name' => 'test_app',
+                'description' => 'Description Test',
+                'password' => 'short' // short password < 6
+            ),
+        );
+    }
 
-        $this->assertEquals(
-            'application/json',
-            $response->getContentType()
+    public function getGoodItems()
+    {
+        return array(
+            array(
+                'name' => 'test_app',
+                'description' => 'Description Test',
+                'password' => 'test_password'
+            ),
+            array(
+                'name' => 'test_app_1',
+                'description' => 'Description Test 2',
+                'password' => 'n1209nr02nr4ro3'
+            ),
+        );
+    }
+
+    public function getListFilters()
+    {
+        return array(
+            'name'
+        );
+    }
+
+    public function getListOrders()
+    {
+        return array(
+            'name',
         );
     }
 
     public function testCrud()
     {
+        // create
+        $response = $this->rest('post', 'app', array(
+            'name' => 'test_app_' . rand(0, 1000),
+            'description' => 'Description Test',
+            'password' => 'test_password'
+        ));
+
+        $this->assertResponse($response, 201);
+
+        $id = $response->getContent();
+
         // read list
-        $response = $this->call('get', 'app');
-        $this->assertResponse($response, 200);
+        $response = $this->rest('get', sprintf('app/%d', $id));
+
+        $this->assertResponse(
+            $response,
+            200
+        );
 
         $content = json_decode($response->getContent(), true);
 
-        //$this->assertArrayHasKey('statu', $content);
+        $this->assertArrayHasKey('id', $content);
+        $this->assertArrayHasKey('name', $content);
+        $this->assertArrayHasKey('description', $content);
+//        $this->assertArrayHasKey('password', $content);
 
+        // verify all the fields with a validator
+
+        $content = json_decode($response->getContent(), true);
+
+        // update the app
+        $response = $this->rest('put', sprintf('app/%d', $id), array(
+            'name' => 'updated_test'
+        ));
+
+        //$this->assertResponse($response, )
+
+        // delete the app
+        $response = $this->rest('delete', sprintf('app/%d', $id));
+
+        $this->assertResponse($response, 204);
     }
-
 }
