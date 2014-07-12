@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\Form\Model;
+namespace Michcald\Dummy\App\Form\Model;
 
 class Repository extends \Michcald\Form
 {
@@ -9,7 +9,9 @@ class Repository extends \Michcald\Form
         $reqVal = new \Michcald\Validator\NotEmpty();
 
         $nameVal = new \Michcald\Validator\String();
-        $nameVal->setMax(255)
+        $nameVal
+            ->setMin(1)
+            ->setMax(255)
             ->setRegex('^[a-z0-9_]*$');
 
         $name = new \Michcald\Form\Element\Text();

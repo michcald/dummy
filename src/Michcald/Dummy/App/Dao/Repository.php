@@ -9,27 +9,9 @@ class Repository extends \Michcald\Dummy\Dao
         return 'meta_repository';
     }
 
-    public function findOne(\Michcald\Dummy\Dao\Query $query)
-    {
-        $repository = parent::findOne($query);
-
-        $fieldDao = new Repository\Field();
-
-        $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('repository_id', $repository->getId());
-
-        $result = $fieldDao->findAll($query);
-
-        foreach ($result->getResults() as $field) {
-            $repository->addField($field);
-        }
-
-        return $repository;
-    }
-
     public function persist($repository)
     {
-        parent::persist($repository);
+        return parent::persist($repository);
 
         // TODO create/update fields
 
@@ -38,7 +20,7 @@ class Repository extends \Michcald\Dummy\Dao
 
     public function delete($repository)
     {
-        parent::delete($repository);
+        return parent::delete($repository);
 
         // TODO delete the fields in meta_repo_fields
 
@@ -49,27 +31,15 @@ class Repository extends \Michcald\Dummy\Dao
     {
         $repository = new \Michcald\Dummy\App\Model\Repository();
 
-        if ($repository) {
-            $repository
-                ->setId($row['id'])
-                ->setName($row['name'])
+        if ($row) {
+            $repository->setName($row['name'])
                 ->setDescription($row['description'])
                 ->setSingularLabel($row['label_singular'])
                 ->setPluralLabel($row['label_plural']);
 
-            // parents
-            $parents = json_decode($row['parents'], true);
-            foreach ($parents as $parent) {
-                //$repository->addParent($parent);
+            if (isset($row['id'])) {
+                $repository->setId($row['id']);
             }
-
-            // children
-            $children = json_decode($row['children'], true);
-            foreach ($children as $child) {
-                //$repository->addChild($child);
-            }
-
-            // TODO load all the fields
         }
 
         return $repository;

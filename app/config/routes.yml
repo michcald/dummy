@@ -45,17 +45,17 @@ routes:
       uri:
           pattern: repository
           requirements: []
-      controller: \Michcald\Dummy\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: createAction
     
     - name: dummy.repository.read
       methods: ["GET"]
       uri:
-          pattern: repository/{id}
+          pattern: repository/{name}
           requirements:
-              - param: id
-                value: "\d+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+              - param: name
+                value: "[a-z0-9_]+"
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: readAction
     
     - name: dummy.repository.list
@@ -63,27 +63,27 @@ routes:
       uri:
           pattern: repository
           requirements: []
-      controller: \Michcald\Dummy\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: listAction
       
     - name: dummy.repository.update
       methods: ["PUT"]
       uri:
-          pattern: repository/{id}
+          pattern: repository/{name}
           requirements:
-              - param: id
-                value: "\d+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+              - param: name
+                value: "[a-z0-9_]+"
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: updateAction
       
     - name: dummy.repository.delete
       methods: ["DELETE"]
       uri:
-          pattern: repository/{id}
+          pattern: repository/{name}
           requirements:
-              - param: id
-                value: "\d+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+              - param: name
+                value: "[a-z0-9_]+"
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: deleteAction
 
     # repository
@@ -93,7 +93,7 @@ routes:
       uri:
           pattern: repository/field
           requirements: []
-      controller: \Michcald\Dummy\Controller\Repository\FieldController
+      controller: \Michcald\Dummy\App\Controller\Repository\FieldController
       action: createAction
     
     - name: dummy.repository.field.read
@@ -103,7 +103,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\Controller\Repository\FieldController
+      controller: \Michcald\Dummy\App\Controller\Repository\FieldController
       action: readAction
     
     - name: dummy.repository.field.list
@@ -113,7 +113,7 @@ routes:
           requirements:
               - param: repositoryId
                 value: "\d+"
-      controller: \Michcald\Dummy\Controller\Repository\FieldController
+      controller: \Michcald\Dummy\App\Controller\Repository\FieldController
       action: listAction
       
     - name: dummy.repository.field.update
@@ -123,7 +123,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: updateAction
       
     - name: dummy.repository.field.delete
@@ -133,7 +133,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: deleteAction
     
     # entity

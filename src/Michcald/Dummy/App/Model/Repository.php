@@ -84,18 +84,16 @@ class Repository extends \Michcald\Dummy\Model
         $array = array(
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'label' => array(
-                'singular' => $this->getSingularLabel(),
-                'plural' => $this->getPluralLabel(true)
-            ),
+            'label_singular' => $this->getSingularLabel(),
+            'label_plural' => $this->getPluralLabel(true),
             'description' => $this->getDescription(),
-            'parents' => $this->getParents(),
-            'children' => $this->getChildren(),
-            'fields' => array()
+            //'parents' => $this->getParents(),
+            //get'children' => $this->getChildren(),
+            //'fields' => array()
         );
 
         foreach ($this->fields as $field) {
-            $array['fields'][] = $field->toArray();
+            //$array['fields'][] = $field->toArray();
         }
 
         return $array;
