@@ -189,7 +189,9 @@ abstract class TestController extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('id', $item);
 
         foreach ($this->getFields() as $field) {
-            $this->assertArrayHasKey($field, $item);
+            if ($field['required'] == true) {
+                $this->assertArrayHasKey($field['name'], $item);
+            }
         }
     }
 
@@ -277,16 +279,6 @@ abstract class TestController extends PHPUnit_Framework_TestCase
 
     public function testList()
     {
-        $response = $this->rest(
-            'get',
-            sprintf('%s', $this->getUri())
-        );
-        $this->assertResponse($response, 200);
-
-        $this->validateList($response);
-
-        //
-
         foreach ($this->getGoodListParams() as $params) {
             $response = $this->rest(
                 'get',
@@ -315,5 +307,51 @@ abstract class TestController extends PHPUnit_Framework_TestCase
         }
     }
 
-    abstract public function testCrud();
+    public function testCrud()
+    {
+        foreach ($this->getGoodItems() as $item) {
+
+            // create
+            $response = $this->rest('post', sprintf('%s', $this->getUri()), $item);
+
+            if ($response->getStatusCode() != 201) {
+                var_dump($response);
+                var_dump($item);
+                die;
+            }
+
+            $this->assertResponse($response, 201);
+
+            $id = $response->getContent();
+
+            // read list
+            // need to keep %s rather than %d cause id for repositories is a name
+            $response = $this->rest('get', sprintf('%s/%s', $this->getUri(), $id));
+
+            $this->assertResponse(
+                $response,
+                200
+            );
+
+            $content = json_decode($response->getContent(), true);
+
+            $this->validateItem($content);
+
+            // @TODO verify all the fields with a validator
+
+            $content = json_decode($response->getContent(), true);
+
+            // update the app @TODO
+            $response = $this->rest('put', sprintf('%s/%s', $this->getUri(), $id), array(
+                'name' => 'updated_test'
+            ));
+
+            //$this->assertResponse($response, )
+
+            // delete the app
+            $response = $this->rest('delete', sprintf('%s/%s', $this->getUri(), $id));
+
+            $this->assertResponse($response, 204);
+        }
+    }
 }
