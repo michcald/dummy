@@ -32,17 +32,18 @@ class Request extends \Michcald\Mvc\Request
 
     private function buildHttpRequest()
     {
-        $uri = str_replace('pub/index.php', '', $_SERVER['PHP_SELF']);
-        $uri = str_replace($uri, '', $_SERVER['REQUEST_URI']);
-        $uri = str_replace('?' . $_SERVER['QUERY_STRING'], '', $uri);
-        // remove / at the beginning and at the end
+        $baseUrl = Config::getInstance()->base_url;
+        
+        $url = sprintf('http://%s%s', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
+        
+        $uri = str_replace($baseUrl, '', $url);
+        
         if ($uri{0} == '/') {
             $uri = substr($uri, 1);
         }
-
-        $length = strlen($uri);
-        if ($uri{$length-1} == '/') {
-            $uri = substr($uri, 0, $length-1);
+        
+        if ($uri{strlen($uri)-1} == '/') {
+            $uri = substr($uri, 0, strlen($uri)-1);
         }
 
         $this->setMethod($_SERVER['REQUEST_METHOD'])

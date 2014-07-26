@@ -1,3 +1,5 @@
+base_url: http://localhost/dummy/
+
 database:
     adapter: MYSQL
     host: localhost

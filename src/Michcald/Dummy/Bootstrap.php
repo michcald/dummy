@@ -6,6 +6,8 @@ abstract class Bootstrap
 {
     public static function init()
     {
+        date_default_timezone_set('europe/london');
+        
         self::initConfig();
         self::initMonolog();
         self::initDb();
@@ -24,10 +26,14 @@ abstract class Bootstrap
 
     private static function initMonolog()
     {
-        $logdir = __DIR__ . '/../../../app/log';
+        $logdir = __DIR__ . '/../../../app/logs';
+        
+        if (!is_dir($logdir)) {
+            mkdir($logdir, 0777);
+        }
 
         $logdir = realpath($logdir);
-
+        
         $logger = new \Monolog\Logger('monolog');
 
         $logger->pushHandler(
