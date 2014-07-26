@@ -22,23 +22,5 @@ class App extends \Michcald\Form
         $description = new \Michcald\Form\Element\Text();
         $description->setName('description');
         $this->addElement($description);
-
-        $val2 = new \Michcald\Validator\String();
-        $val2->setMin(6);
-
-        $password = new \Michcald\Form\Element\Password();
-        $password->setName('password')
-            ->addValidator(new \Michcald\Validator\NotEmpty())
-            ->addValidator($val2);
-        $this->addElement($password);
-    }
-
-    public function getValues()
-    {
-        $values = parent::getValues();
-
-        $values['password'] = sha1($values['password']);
-
-        return $values;
     }
 }

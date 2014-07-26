@@ -8,7 +8,9 @@ class App extends \Michcald\Dummy\Model
 
     private $description;
 
-    private $password;
+    private $publicKey;
+    
+    private $privateKey;
 
     public function setName($name)
     {
@@ -34,16 +36,28 @@ class App extends \Michcald\Dummy\Model
         return $this->description;
     }
 
-    public function setPassword($password)
+    public function setPublicKey($publicKey)
     {
-        $this->password = $password;
+        $this->publicKey = $publicKey;
 
         return $this;
     }
 
-    public function getPassword()
+    public function getPublicKey()
     {
-        return $this->password;
+        return $this->publicKey;
+    }
+    
+    public function setPrivateKey($privateKey)
+    {
+        $this->privateKey = $privateKey;
+
+        return $this;
+    }
+
+    public function getPrivateKey()
+    {
+        return $this->prviateKey;
     }
 
     public function toArray()
@@ -52,7 +66,7 @@ class App extends \Michcald\Dummy\Model
             'id' => (int)$this->getId(),
             'name' => $this->name,
             'description' => $this->description,
-            'password' => $this->password
+            'public_key' => $this->publicKey
         );
     }
 

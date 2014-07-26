@@ -19,7 +19,11 @@ class AppController extends \Michcald\Dummy\Controller\Crud
 
         if ($form->isValid()) {
 
-            $app = $this->dao->create($form->getValues());
+            $values = $form->getValues();
+            $values['public_key'] = hash('sha256', mt_rand());
+            $values['private_key'] = hash('sha256', mt_rand() * rand(0, 10000));
+            
+            $app = $this->dao->create($values);
 
             $this->dao->persist($app);
 

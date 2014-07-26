@@ -81,22 +81,6 @@ abstract class Bootstrap
         $installSql = file_get_contents($file);
 
         $db->query($installSql);
-
-        // create default application
-        $sql = 'SELECT COUNT(id) count FROM meta_app';
-        $stm = $db->prepare($sql);
-        $stm->execute();
-        $row = $stm->fetch(\PDO::FETCH_ASSOC);
-
-        if ($row['count'] == 0) {
-            $sql = sprintf(
-                'INSERT INTO meta_app (`name`,`description`,`password`) VALUES ("%s","%s","%s");',
-                'dummy',
-                'Default application',
-                sha1('dummy')
-            );
-            $db->query($sql);
-        }
     }
 
     private static function initRoutes()
