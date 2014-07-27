@@ -57,13 +57,24 @@ class RepositoryController extends Crud implements Administrable
             return $response;
 
         } else {
+            
+            $values = $form->getValues();
+            
+            $formErrors = array();
+            foreach ($form->getElements() as $element) {
+                $formErrors[$element->getName()] = array(
+                    'value' => $values[$element->getName()],
+                    'errors' => $element->getErrorMessages()
+                );
+            }
+            
             $response = new \Michcald\Dummy\Response\Json();
             $response->setStatusCode(400)
                 ->setContent(array(
                     'error' => array(
                         'status_code' => 400,
                         'message' => 'Data not valid',
-                        'form' => $form->getErrorMessages()
+                        'form' => $formErrors
                     )
                 ));
             return $response;
@@ -73,7 +84,8 @@ class RepositoryController extends Crud implements Administrable
     public function readAction($name)
     {
         $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('name', $name);
+        $query->addWhere('name', $name)
+            ->setLimit(1);
 
         $repository = $this->dao->findOne($query);
 

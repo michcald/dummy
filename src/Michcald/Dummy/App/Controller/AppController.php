@@ -56,14 +56,24 @@ class AppController extends Crud implements Administrable
             return $response;
 
         } else {
-
+            
+            $values = $form->getValues();
+            
+            $formErrors = array();
+            foreach ($form->getElements() as $element) {
+                $formErrors[$element->getName()] = array(
+                    'value' => $values[$element->getName()],
+                    'errors' => $element->getErrorMessages()
+                );
+            }
+            
             $response = new \Michcald\Dummy\Response\Json();
             $response->setStatusCode(400)
                 ->setContent(array(
                     'error' => array(
                         'status_code' => 400,
                         'message' => 'Data not valid',
-                        'form' => $form->getErrorMessages()
+                        'form' => $formErrors
                     )
                 ));
             return $response;
