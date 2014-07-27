@@ -76,11 +76,13 @@ abstract class Bootstrap
     {
         /* @var \PDO $db */
         $db = \Michcald\Mvc\Container::get('dummy.db');
-
+        
         $file = realpath(__DIR__ . '/../../../app/install.sql');
         $installSql = file_get_contents($file);
 
+        $db->beginTransaction();
         $db->query($installSql);
+        $db->commit();
     }
 
     private static function initRoutes()

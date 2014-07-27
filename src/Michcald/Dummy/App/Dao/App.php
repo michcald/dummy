@@ -12,7 +12,8 @@ class App extends \Michcald\Dummy\Dao
             $app->setName($row['name'])
                 ->setDescription($row['description'])
                 ->setPublicKey($row['public_key'])
-                    ->setPrivateKey($row['private_key']);
+                ->setPrivateKey($row['private_key'])
+                ->setIsAdmin($row['is_admin']);
 
             if (isset($row['id'])) {
                 $app->setId($row['id']);

@@ -2,6 +2,8 @@
 
 namespace Michcald\Dummy\App\Controller;
 
+use Michcald\Dummy\Response\Json as JsonResponse;
+
 class AppController extends \Michcald\Dummy\Controller\Crud
 {
     private $dao;
@@ -20,6 +22,23 @@ class AppController extends \Michcald\Dummy\Controller\Crud
         if ($form->isValid()) {
 
             $values = $form->getValues();
+            
+            $query = new \Michcald\Dummy\Dao\Query();
+            $query->addWhere('name', $values['name']);
+            $result = $this->dao->findOne($query);
+            
+            if ($result) {
+                $response = new JsonResponse();
+                $response->setStatusCode(409) // conflict
+                    ->setContent(array(
+                        'error' => array(
+                            'status_code' => 409,
+                            'message' => 'The app already exists'
+                        )
+                    ));
+                return $response;
+            }
+            
             $values['public_key'] = hash('sha256', mt_rand());
             $values['private_key'] = hash('sha256', mt_rand() * rand(0, 10000));
             

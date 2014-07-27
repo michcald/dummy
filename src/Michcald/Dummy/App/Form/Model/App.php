@@ -22,5 +22,13 @@ class App extends \Michcald\Form
         $description = new \Michcald\Form\Element\Text();
         $description->setName('description');
         $this->addElement($description);
+        
+        $val = new \Michcald\Validator\String();
+        $val->setRegex('^[01]$');
+        
+        $admin = new \Michcald\Form\Element\Text();
+        $admin->setName('is_admin')
+                ->addValidator($val);
+        $this->addElement($admin);
     }
 }
