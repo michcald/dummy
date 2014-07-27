@@ -9,10 +9,11 @@ abstract class Bootstrap
         date_default_timezone_set('europe/london');
         
         self::initConfig();
+        self::initRoutes();
+        self::initEventListeners();
         self::initMonolog();
         self::initDb();
         self::initDbSchema();
-        self::initRoutes();
         self::initRequest();
     }
 
@@ -22,6 +23,17 @@ abstract class Bootstrap
 
         $config = \Michcald\Dummy\Config::getInstance();
         $config->loadDir($dir);
+    }
+    
+    private static function initEventListeners()
+    {
+        $mvc = \Michcald\Mvc\Container::get('dummy.mvc');
+
+        $listener = new Event\Listener\Monolog();
+        $mvc->addEventSubscriber($listener);
+        
+        $listener = new Event\Listener\Administrable();
+        $mvc->addEventSubscriber($listener);
     }
 
     private static function initMonolog()
@@ -88,10 +100,7 @@ abstract class Bootstrap
     private static function initRoutes()
     {
         $mvc = new \Michcald\Mvc\Mvc();
-
-        $listener = new Event\Listener\Monolog();
-        $mvc->addEventSubscriber($listener);
-
+        
         $config = \Michcald\Dummy\Config::getInstance();
 
         foreach ($config->routes as $routeConfig) {

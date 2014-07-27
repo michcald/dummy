@@ -59,6 +59,10 @@ CREATE TABLE IF NOT EXISTS meta_app_grants (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `app_id` INTEGER NOT NULL,
     `repository_id` INTEGER NOT NULL,
+    `create` INTEGER NOT NULL DEFAULT 0,
+    `read` INTEGER NOT NULL DEFAULT 0,
+    `update` INTEGER NOT NULL DEFAULT 0,
+    `delete` INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`app_id`) REFERENCES `meta_app`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`repository_id`) REFERENCES `meta_repository`(`id`) ON DELETE CASCADE

@@ -93,7 +93,7 @@ class Query
         return implode(', ', $str);
     }
 
-    private function getQuery()
+    private function getQuery($withLimitAndOffset = true)
     {
         $sql = 'FROM ' . $this->table;
 
@@ -109,7 +109,9 @@ class Query
             $sql .= ' ORDER BY ' . $this->getOrderString();
         }
 
-        $sql .= ' LIMIT ' . $this->limit . ' OFFSET ' . $this->offset;
+        if ($withLimitAndOffset) {
+            $sql .= ' LIMIT ' . $this->limit . ' OFFSET ' . $this->offset;
+        }
 
         return $sql;
     }
@@ -121,6 +123,6 @@ class Query
 
     final public function getCountQuery()
     {
-        return 'SELECT COUNT(id) count ' . $this->getQuery();
+        return 'SELECT COUNT(*) count ' . $this->getQuery(false);
     }
 }

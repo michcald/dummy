@@ -22,6 +22,31 @@ class App extends \Michcald\Dummy\Dao
 
         return $app;
     }
+    
+    public function persist($app)
+    {
+        $db = $this->getDb();
+        
+        $stm = $db->prepare('SELECT repository_id FROM meta_app_grant WHERE app_id=:appId');
+        $stm->execute(array(
+            'appId' => $app->getId()
+        ));
+        
+        $db->beginTransaction();
+        
+        parent::persist($app);
+        
+        // for every application create a record for the grants
+        foreach ($stm->fetchAll(\PDO::FETCH_ASSOC) as $r) {
+            $db->prepare('INSERT INTO meta_app_grant (app_id,repository_id) VALUES (?,?)');
+            $db->exec(array(
+                $app->getId(),
+                $r['repository_id'],
+            ));
+        }
+        
+        $db->commit();
+    }
 
     public function getTable()
     {

@@ -2,7 +2,10 @@
 
 namespace Michcald\Dummy\Controller\Repository;
 
-class FieldController extends \Michcald\Dummy\Controller\Crud
+use Michcald\Dummy\Interfaces\Administrable;
+use Michcald\Dummy\Controller\Crud;
+
+class FieldController extends Crud implements Administrable
 {
     private $dao;
 

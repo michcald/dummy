@@ -2,9 +2,12 @@
 
 namespace Michcald\Dummy\App\Controller;
 
+use Michcald\Dummy\Interfaces\Administrable;
+use Michcald\Dummy\Controller\Crud;
+
 use Michcald\Dummy\Response\Json as JsonResponse;
 
-class AppController extends \Michcald\Dummy\Controller\Crud
+class AppController extends Crud implements Administrable
 {
     private $dao;
 

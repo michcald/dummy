@@ -2,10 +2,13 @@
 
 namespace Michcald\Dummy\App\Controller;
 
+use Michcald\Dummy\Interfaces\Administrable;
+use Michcald\Dummy\Controller\Crud;
+
 use Michcald\Dummy\Response\Json as JsonResponse;
 use Michcald\Dummy\Response\Error\NotFoundResponse;
 
-class RepositoryController extends \Michcald\Dummy\Controller\Crud
+class RepositoryController extends Crud implements Administrable
 {
     private $dao;
 
@@ -16,13 +19,34 @@ class RepositoryController extends \Michcald\Dummy\Controller\Crud
 
     public function createAction()
     {
+        // @TODO verify if the app is admin flagged
+        
         $form = new \Michcald\Dummy\App\Form\Model\Repository();
 
         $form->setValues($this->getRequest()->getData());
 
         if ($form->isValid()) {
 
-            $repository = $this->dao->create($form->getValues());
+            $values = $form->getValues();
+            
+            // @TODO verify if already exists
+            $query = new \Michcald\Dummy\Dao\Query();
+            $query->addWhere('name', $values['name']);
+            $result = $this->dao->findOne($query);
+            
+            if ($result) {
+                $response = new JsonResponse();
+                $response->setStatusCode(409) // conflict
+                    ->setContent(array(
+                        'error' => array(
+                            'status_code' => 409,
+                            'message' => 'The repository already exists'
+                        )
+                    ));
+                return $response;
+            }
+            
+            $repository = $this->dao->create($values);
 
             $this->dao->persist($repository);
 
@@ -141,11 +165,12 @@ class RepositoryController extends \Michcald\Dummy\Controller\Crud
 
     public function updateAction($name)
     {
-
+        // @TODO verify if the app is admin flagged
     }
 
     public function deleteAction($name)
     {
+        // @TODO verify if the app is admin flagged
         $query = new \Michcald\Dummy\Dao\Query();
         $query->addWhere('name', $name);
 

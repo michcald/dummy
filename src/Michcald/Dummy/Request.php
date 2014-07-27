@@ -37,13 +37,16 @@ class Request extends \Michcald\Mvc\Request
         $url = sprintf('http://%s%s', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
         
         $uri = str_replace($baseUrl, '', $url);
+        $uri = str_replace('?' . $_SERVER['QUERY_STRING'], '', $uri);
         
-        if ($uri{0} == '/') {
-            $uri = substr($uri, 1);
-        }
-        
-        if ($uri{strlen($uri)-1} == '/') {
-            $uri = substr($uri, 0, strlen($uri)-1);
+        if (strlen($uri) > 0) {
+            if ($uri{0} == '/') {
+                $uri = substr($uri, 1);
+            }
+
+            if ($uri{strlen($uri)-1} == '/') {
+                $uri = substr($uri, 0, strlen($uri)-1);
+            }
         }
 
         $this->setMethod($_SERVER['REQUEST_METHOD'])
