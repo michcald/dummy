@@ -6,8 +6,8 @@ abstract class Bootstrap
 {
     public static function init()
     {
-        date_default_timezone_set('europe/london');
-        
+        date_default_timezone_set('Europe/London');
+
         self::initConfig();
         self::initRoutes();
         self::initEventListeners();
@@ -24,14 +24,14 @@ abstract class Bootstrap
         $config = \Michcald\Dummy\Config::getInstance();
         $config->loadDir($dir);
     }
-    
+
     private static function initEventListeners()
     {
         $mvc = \Michcald\Mvc\Container::get('dummy.mvc');
 
         $listener = new Event\Listener\Monolog();
         $mvc->addEventSubscriber($listener);
-        
+
         $listener = new Event\Listener\Administrable();
         $mvc->addEventSubscriber($listener);
     }
@@ -39,13 +39,13 @@ abstract class Bootstrap
     private static function initMonolog()
     {
         $logdir = __DIR__ . '/../../../app/logs';
-        
+
         if (!is_dir($logdir)) {
             mkdir($logdir, 0777);
         }
 
         $logdir = realpath($logdir);
-        
+
         $logger = new \Monolog\Logger('monolog');
 
         $logger->pushHandler(
@@ -88,7 +88,7 @@ abstract class Bootstrap
     {
         /* @var \PDO $db */
         $db = \Michcald\Mvc\Container::get('dummy.db');
-        
+
         $file = realpath(__DIR__ . '/../../../app/install.sql');
         $installSql = file_get_contents($file);
 
@@ -100,7 +100,7 @@ abstract class Bootstrap
     private static function initRoutes()
     {
         $mvc = new \Michcald\Mvc\Mvc();
-        
+
         $config = \Michcald\Dummy\Config::getInstance();
 
         foreach ($config->routes as $routeConfig) {
