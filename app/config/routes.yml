@@ -126,12 +126,12 @@ routes:
       controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: deleteAction
 
-    # repository
+    # repository field
     
     - name: dummy.repository.field.create
       methods: ["POST"]
       uri:
-          pattern: repository/field
+          pattern: repository_field
           requirements: []
       controller: \Michcald\Dummy\App\Controller\Repository\FieldController
       action: createAction
@@ -139,27 +139,25 @@ routes:
     - name: dummy.repository.field.read
       methods: ["GET"]
       uri:
-          pattern: repository/field/{id}
+          pattern: repository_field/{id}
           requirements:
               - param: id
-                value: "\d+"
+                value: \d+
       controller: \Michcald\Dummy\App\Controller\Repository\FieldController
       action: readAction
     
     - name: dummy.repository.field.list
       methods: ["GET"]
       uri:
-          pattern: repository/{repositoryId}/field
-          requirements:
-              - param: repositoryId
-                value: "\d+"
+          pattern: repository_field
+          requirements: []
       controller: \Michcald\Dummy\App\Controller\Repository\FieldController
       action: listAction
       
     - name: dummy.repository.field.update
       methods: ["PUT"]
       uri:
-          pattern: repository/field/{id}
+          pattern: repository_field/{id}
           requirements:
               - param: id
                 value: "\d+"

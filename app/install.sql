@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS meta_repository_field (
     `sortable` TINYINT NOT NULL DEFAULT 0,
     `main` TINYINT NOT NULL DEFAULT 0,
     `list` TINYINT NOT NULL DEFAULT 0,
-    `type` INTEGER NOT NULL,
+    `type` VARCHAR(255) NOT NULL,
+    `display_order` INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`repository_id`) REFERENCES `meta_repository`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;

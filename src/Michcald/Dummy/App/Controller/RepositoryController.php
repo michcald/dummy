@@ -175,7 +175,7 @@ class RepositoryController extends Crud implements Administrable
         }
     }
 
-    public function updateAction($name)
+    public function updateAction($id)
     {
         // @TODO verify if the app is admin flagged
     }

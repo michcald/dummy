@@ -92,22 +92,30 @@ abstract class Dao
 
             $updateSql = sprintf('INSERT INTO %s ', $this->getTable());
 
+            $values = array();
             $chunks = array();
             foreach ($model->toArray() as $key => $value) {
+                if ($key == 'id') {
+                    continue;
+                }
                 $chunks[] = sprintf('`%s`', $key);
+                $values[] = $value;
             }
 
             $updateSql .= '(' . implode(',', $chunks) . ') VALUES (';
 
             $chunks = array();
             foreach ($model->toArray() as $key => $value) {
+                if ($key == 'id') {
+                    continue;
+                }
                 $chunks[] = '?';
             }
 
             $updateSql .= implode(',', $chunks) . ');';
 
             $s = $this->getDb()->prepare($updateSql);
-            $s->execute(array_values($model->toArray()));
+            $s->execute($values);
 
             // last insert id
             /*$stm = $this->getDb()->prepare(
@@ -117,7 +125,7 @@ abstract class Dao
             $row = $stm->fetch();*/
 
             if (!$s) {
-                throw new \Exception($this->getDb()->errorInfo());
+                throw new \Exception(json_encode($s->errorInfo()));
             }
 
             $model->setId($this->getDb()->lastInsertId());
