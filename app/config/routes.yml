@@ -28,6 +28,16 @@ routes:
       controller: \Michcald\Dummy\App\Controller\AppController
       action: createAction
 
+    - name: dummy.app.update
+      methods: ["PUT"]
+      uri:
+          pattern: app/{id}
+          requirements:
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\AppController
+      action: updateAction
+
     - name: dummy.app.delete
       methods: ["DELETE"]
       uri:
@@ -37,6 +47,36 @@ routes:
                 value: "\d+"
       controller: \Michcald\Dummy\App\Controller\AppController
       action: deleteAction
+
+    # app grant
+
+    - name: dummy.grant.list
+      methods: ["GET"]
+      uri:
+          pattern: grant
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\GrantController
+      action: listAction
+    
+    - name: dummy.grant.read
+      methods: ["GET"]
+      uri:
+          pattern: grant/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\GrantController
+      action: readAction
+
+    - name: dummy.grant.update
+      methods: ["PUT"]
+      uri:
+          pattern: grant/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\GrantController
+      action: updateAction
     
     # repository
     
@@ -51,10 +91,10 @@ routes:
     - name: dummy.repository.read
       methods: ["GET"]
       uri:
-          pattern: repository/{name}
+          pattern: repository/{id}
           requirements:
-              - param: name
-                value: "[a-z0-9_]+"
+              - param: id
+                value: \d+
       controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: readAction
     
@@ -69,20 +109,20 @@ routes:
     - name: dummy.repository.update
       methods: ["PUT"]
       uri:
-          pattern: repository/{name}
+          pattern: repository/{id}
           requirements:
-              - param: name
-                value: "[a-z0-9_]+"
+              - param: id
+                value: \d+
       controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: updateAction
       
     - name: dummy.repository.delete
       methods: ["DELETE"]
       uri:
-          pattern: repository/{name}
+          pattern: repository/{id}
           requirements:
-              - param: name
-                value: "[a-z0-9_]+"
+              - param: id
+                value: \d+
       controller: \Michcald\Dummy\App\Controller\RepositoryController
       action: deleteAction
 

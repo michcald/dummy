@@ -20,7 +20,7 @@ class RepositoryController extends Crud implements Administrable
     public function createAction()
     {
         // @TODO verify if the app is admin flagged
-        
+
         $form = new \Michcald\Dummy\App\Form\Model\Repository();
 
         $form->setValues($this->getRequest()->getData());
@@ -28,12 +28,12 @@ class RepositoryController extends Crud implements Administrable
         if ($form->isValid()) {
 
             $values = $form->getValues();
-            
+
             // @TODO verify if already exists
             $query = new \Michcald\Dummy\Dao\Query();
             $query->addWhere('name', $values['name']);
             $result = $this->dao->findOne($query);
-            
+
             if ($result) {
                 $response = new JsonResponse();
                 $response->setStatusCode(409) // conflict
@@ -45,21 +45,21 @@ class RepositoryController extends Crud implements Administrable
                     ));
                 return $response;
             }
-            
+
             $repository = $this->dao->create($values);
 
             $this->dao->persist($repository);
 
             $response = new JsonResponse();
             $response->setStatusCode(201)
-                ->setContent($repository->getName());
+                ->setContent($repository->getId());
 
             return $response;
 
         } else {
-            
+
             $values = $form->getValues();
-            
+
             $formErrors = array();
             foreach ($form->getElements() as $element) {
                 $formErrors[$element->getName()] = array(
@@ -67,7 +67,7 @@ class RepositoryController extends Crud implements Administrable
                     'errors' => $element->getErrorMessages()
                 );
             }
-            
+
             $response = new \Michcald\Dummy\Response\Json();
             $response->setStatusCode(400)
                 ->setContent(array(
@@ -81,16 +81,16 @@ class RepositoryController extends Crud implements Administrable
         }
     }
 
-    public function readAction($name)
+    public function readAction($id)
     {
         $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('name', $name)
+        $query->addWhere('id', $id)
             ->setLimit(1);
 
         $repository = $this->dao->findOne($query);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $name);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $id);
         }
 
         $response = new \Michcald\Dummy\Response\Json();
@@ -180,16 +180,16 @@ class RepositoryController extends Crud implements Administrable
         // @TODO verify if the app is admin flagged
     }
 
-    public function deleteAction($name)
+    public function deleteAction($id)
     {
         // @TODO verify if the app is admin flagged
         $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('name', $name);
+        $query->addWhere('id', $id);
 
         $repository = $this->dao->findOne($query);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $name);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $id);
         }
 
         $this->dao->delete($repository);

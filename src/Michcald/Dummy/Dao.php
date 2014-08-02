@@ -73,15 +73,20 @@ abstract class Dao
         if ($model->getId()) {
             $updateSql = sprintf('UPDATE %s SET ', $this->getTable());
 
+            $values = array();
             $chunks = array();
             foreach ($model->toArray() as $key => $value) {
+                if ($key == 'id') {
+                    continue;
+                }
                 $chunks[] = sprintf('`%s`=?', $key);
+                $values[] = $value;
             }
 
-            $updateSql .= implode(',', $chunks);
+            $updateSql .= implode(',', $chunks) . ' WHERE id=' . $model->getId();
 
             $s = $this->getDb()->prepare($updateSql);
-            $s->execute(array_values($model->toArray()));
+            $s->execute($values);
 
         } else {
 

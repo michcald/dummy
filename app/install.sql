@@ -55,7 +55,7 @@ INSERT INTO `meta_app` (`name`,`description`,`is_admin`,`public_key`,`private_ke
 /*
  * meta_app_grants
  */
-CREATE TABLE IF NOT EXISTS meta_app_grants (
+CREATE TABLE IF NOT EXISTS meta_app_grant (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `app_id` INTEGER NOT NULL,
     `repository_id` INTEGER NOT NULL,

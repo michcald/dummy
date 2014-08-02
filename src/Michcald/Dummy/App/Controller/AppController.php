@@ -25,11 +25,11 @@ class AppController extends Crud implements Administrable
         if ($form->isValid()) {
 
             $values = $form->getValues();
-            
+
             $query = new \Michcald\Dummy\Dao\Query();
             $query->addWhere('name', $values['name']);
             $result = $this->dao->findOne($query);
-            
+
             if ($result) {
                 $response = new JsonResponse();
                 $response->setStatusCode(409) // conflict
@@ -41,10 +41,10 @@ class AppController extends Crud implements Administrable
                     ));
                 return $response;
             }
-            
+
             $values['public_key'] = hash('sha256', mt_rand());
             $values['private_key'] = hash('sha256', mt_rand() * rand(0, 10000));
-            
+
             $app = $this->dao->create($values);
 
             $this->dao->persist($app);
@@ -56,9 +56,9 @@ class AppController extends Crud implements Administrable
             return $response;
 
         } else {
-            
+
             $values = $form->getValues();
-            
+
             $formErrors = array();
             foreach ($form->getElements() as $element) {
                 $formErrors[$element->getName()] = array(
@@ -66,7 +66,7 @@ class AppController extends Crud implements Administrable
                     'errors' => $element->getErrorMessages()
                 );
             }
-            
+
             $response = new \Michcald\Dummy\Response\Json();
             $response->setStatusCode(400)
                 ->setContent(array(
@@ -193,8 +193,9 @@ class AppController extends Crud implements Administrable
         return $response;
     }
 
-    public function updateAction($id) {
-
+    public function updateAction($id)
+    {
+        
     }
 
 }

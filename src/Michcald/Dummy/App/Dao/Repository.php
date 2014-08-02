@@ -12,50 +12,57 @@ class Repository extends \Michcald\Dummy\Dao
     public function persist($repository)
     {
         $db = $this->getDb();
-        
-        $stm = $db->prepare('SELECT app_id FROM meta_app_grant WHERE repository_id=:repoId');
+
+        $stm = $db->prepare(
+            'SELECT id app_id '
+            . 'FROM meta_app '
+            . 'WHERE id NOT IN ('
+                . 'SELECT app_id FROM meta_app_grant WHERE repository_id=:repositoryId'
+            . ')');
         $stm->execute(array(
-            'repoId' => $repository->getId()
+            'repositoryId' => $repository->getId()
         ));
-        
+
         $db->beginTransaction();
-        
+
         parent::persist($repository);
-        
+
         // create the related table
         $sql = sprintf(
-            'CREATE TABLE IF NOT EXISTS %s (`id` INTEGER NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`));', 
+            'CREATE TABLE IF NOT EXISTS %s (`id` INTEGER NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`));',
             $repository->getName()
         );
         $db->query($sql);
-        
+
         // for every application create a record for the grants
         foreach ($stm->fetchAll(\PDO::FETCH_ASSOC) as $app) {
-            $db->prepare('INSERT INTO meta_app_grant (app_id,repository_id) VALUES (?,?)');
-            $db->exec(array(
+            $stm2 = $db->prepare('INSERT INTO meta_app_grant (app_id,repository_id) VALUES (?,?)');
+            $stm2->execute(array(
                 $app['app_id'],
                 $repository->getId()
             ));
         }
-        
+
         $db->commit();
     }
 
     public function delete($repository)
     {
         $db = $this->getDb();
-        
+
         $db->beginTransaction();
-        
+
         $sql = sprintf(
             'DROP TABLE IF EXISTS %s;',
             $repository->getName()
         );
-        
+
         $db->query($sql);
-        
+
+        // remove all the grants on cascade
+
         parent::delete($repository);
-        
+
         $db->commit();
     }
 

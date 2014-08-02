@@ -9,9 +9,9 @@ class App extends \Michcald\Dummy\Model
     private $description;
 
     private $isAdmin;
-    
+
     private $publicKey;
-    
+
     private $privateKey;
 
     public function setName($name)
@@ -37,14 +37,14 @@ class App extends \Michcald\Dummy\Model
     {
         return $this->description;
     }
-    
+
     public function setIsAdmin($isAdmin)
     {
         $this->isAdmin = $isAdmin;
-        
-        return $this->isAdmin;
+
+        return $this;
     }
-    
+
     public function getIsAdmin()
     {
         return $this->isAdmin;
@@ -61,7 +61,7 @@ class App extends \Michcald\Dummy\Model
     {
         return $this->publicKey;
     }
-    
+
     public function setPrivateKey($privateKey)
     {
         $this->privateKey = $privateKey;
