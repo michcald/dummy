@@ -19,9 +19,19 @@ class App extends \Michcald\Form
             ->addValidator($val3);
         $this->addElement($name);
 
+        $title = new \Michcald\Form\Element\Text();
+        $title->setName('title')
+            ->addValidator(new \Michcald\Validator\NotEmpty());
+        $this->addElement($title);
+
         $description = new \Michcald\Form\Element\Text();
         $description->setName('description');
         $this->addElement($description);
+
+        $baseUrl = new \Michcald\Form\Element\Text();
+        $baseUrl->setName('base_url')
+            ->addValidator(new \Michcald\Validator\NotEmpty());
+        $this->addElement($baseUrl);
 
         $val = new \Michcald\Validator\String();
         $val->setRegex('^[01]$');

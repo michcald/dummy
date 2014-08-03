@@ -141,7 +141,7 @@ routes:
       uri:
           pattern: repository_field
           requirements: []
-      controller: \Michcald\Dummy\App\Controller\Repository\Administrable\FieldController
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
       action: createAction
     
     - name: dummy.repository.field.read
@@ -169,7 +169,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\Repository\Administrable\FieldController
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
       action: updateAction
       
     - name: dummy.repository.field.delete
@@ -179,7 +179,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\Repository\Administrable\FieldController
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
       action: deleteAction
     
     # entity
