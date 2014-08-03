@@ -71,7 +71,7 @@ class App extends \Michcald\Dummy\Model
 
     public function getPrivateKey()
     {
-        return $this->prviateKey;
+        return $this->privateKey;
     }
 
     public function toArray()

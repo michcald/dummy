@@ -65,6 +65,7 @@ class Field extends \Michcald\Dummy\Dao
                 $type = 'TEXT';
                 break;
             case 'integer':
+            case 'foreign':
                 $type = 'INT(11)';
                 break;
             case 'float':
@@ -92,6 +93,8 @@ class Field extends \Michcald\Dummy\Dao
                 ));
             }
 
+            // @TODO manager foreign
+
         } else {
             $db->exec(sprintf(
                 'ALTER TABLE %s ADD %s %s %s',
@@ -101,6 +104,31 @@ class Field extends \Michcald\Dummy\Dao
                 $model->isRequired() ? 'NOT NULL' : 'NULL'
             ));
         }
+
+        $db->commit();
+    }
+
+    public function delete($model)
+    {
+        /* @var $model \Michcald\Dummy\App\Model\Repository\Field */
+        $db = $this->getDb();
+
+        $stm = $db->prepare('SELECT name FROM meta_repository WHERE id=:id LIMIT 1');
+        $stm->execute(array(
+            'id' => $model->getRepositoryId()
+        ));
+
+        $repository = $stm->fetch(\PDO::FETCH_ASSOC);
+
+        $db->beginTransaction();
+
+        parent::delete($model);
+
+        $db->exec(sprintf(
+            'ALTER TABLE %s DROP %s',
+            $repository['name'],
+            $model->getName()
+        ));
 
         $db->commit();
     }

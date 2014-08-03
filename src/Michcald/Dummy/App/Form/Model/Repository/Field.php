@@ -11,7 +11,8 @@ class Field extends \Michcald\Form
         'float',
         'boolean',
         'timestamp',
-        'file'
+        'file',
+        'foreign'
     );
 
     public function __construct()

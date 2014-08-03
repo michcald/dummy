@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS meta_app (
 
 /* insert default application */
 
-INSERT INTO `meta_app` (`name`,`description`,`is_admin`,`public_key`,`private_key`) VALUES ("dummy_app","Default application",1,"829c3804401b0727f70f73d4415e162400cbe57b","f64133af6818761d95c8230953e5c9ddee1d0cf3");
+INSERT INTO `meta_app` (`name`,`description`,`is_admin`,`public_key`,`private_key`) VALUES ("dummy_app","Default application",1,"dummy_app","dummy_app");
 
 /*
  * meta_app_grants

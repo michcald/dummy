@@ -1,6 +1,6 @@
 <?php
 
-namespace Michcald\Dummy\App\Controller;
+namespace Michcald\Dummy\App\Controller\Administrable;
 
 use Michcald\Dummy\Interfaces\Administrable;
 use Michcald\Dummy\Controller\Crud;
@@ -140,7 +140,7 @@ class GrantController extends Crud implements Administrable
 
             $updatedGrant = $this->dao->create($values);
             $updatedGrant->setId($grant->getId());
-            
+
             $this->dao->persist($updatedGrant);
 
             $response = new \Michcald\Dummy\Response\Json();

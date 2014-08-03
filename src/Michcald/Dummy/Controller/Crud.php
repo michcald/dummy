@@ -4,13 +4,21 @@ namespace Michcald\Dummy\Controller;
 
 abstract class Crud extends \Michcald\Mvc\Controller\HttpController
 {
-    abstract public function createAction();
+    public function createAction() {}
 
-    abstract public function readAction($id);
+    public function readAction($id) {}
 
-    abstract public function listAction();
+    public function listAction() {}
 
-    abstract public function updateAction($id);
+    public function updateAction($id) {}
 
-    abstract public function deleteAction($id);
+    public function deleteAction($id) {}
+
+    /**
+     * @return \Michcald\Dummy\App\Model\App
+     */
+    protected function getApp()
+    {
+        return  \Michcald\Mvc\Container::get('dummy.app');
+    }
 }

@@ -1,13 +1,21 @@
 routes:
     
     # app
+
+    - name: dummy.app.whoami
+      methods: ["GET"]
+      uri:
+          pattern: whoami
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\AppController
+      action: whoAmIAction
     
     - name: dummy.app.list
       methods: ["GET"]
       uri:
           pattern: app
           requirements: []
-      controller: \Michcald\Dummy\App\Controller\AppController
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: listAction
     
     - name: dummy.app.read
@@ -17,7 +25,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\AppController
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: readAction
 
     - name: dummy.app.create
@@ -25,7 +33,7 @@ routes:
       uri:
           pattern: app
           requirements: []
-      controller: \Michcald\Dummy\App\Controller\AppController
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: createAction
 
     - name: dummy.app.update
@@ -35,7 +43,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\AppController
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: updateAction
 
     - name: dummy.app.delete
@@ -45,7 +53,7 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\AppController
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: deleteAction
 
     # app grant
@@ -55,7 +63,7 @@ routes:
       uri:
           pattern: grant
           requirements: []
-      controller: \Michcald\Dummy\App\Controller\GrantController
+      controller: \Michcald\Dummy\App\Controller\Administrable\GrantController
       action: listAction
     
     - name: dummy.grant.read
@@ -65,7 +73,7 @@ routes:
           requirements:
               - param: id
                 value: \d+
-      controller: \Michcald\Dummy\App\Controller\GrantController
+      controller: \Michcald\Dummy\App\Controller\Administrable\GrantController
       action: readAction
 
     - name: dummy.grant.update
@@ -75,7 +83,7 @@ routes:
           requirements:
               - param: id
                 value: \d+
-      controller: \Michcald\Dummy\App\Controller\GrantController
+      controller: \Michcald\Dummy\App\Controller\Administrable\GrantController
       action: updateAction
     
     # repository
@@ -85,7 +93,7 @@ routes:
       uri:
           pattern: repository
           requirements: []
-      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\Administrable\RepositoryController
       action: createAction
     
     - name: dummy.repository.read
@@ -113,7 +121,7 @@ routes:
           requirements:
               - param: id
                 value: \d+
-      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\Administrable\RepositoryController
       action: updateAction
       
     - name: dummy.repository.delete
@@ -123,7 +131,7 @@ routes:
           requirements:
               - param: id
                 value: \d+
-      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\Administrable\RepositoryController
       action: deleteAction
 
     # repository field
@@ -133,7 +141,7 @@ routes:
       uri:
           pattern: repository_field
           requirements: []
-      controller: \Michcald\Dummy\App\Controller\Repository\FieldController
+      controller: \Michcald\Dummy\App\Controller\Repository\Administrable\FieldController
       action: createAction
     
     - name: dummy.repository.field.read
@@ -161,17 +169,17 @@ routes:
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\Repository\Administrable\FieldController
       action: updateAction
       
     - name: dummy.repository.field.delete
       methods: ["DELETE"]
       uri:
-          pattern: repository/field/{id}
+          pattern: repository_field/{id}
           requirements:
               - param: id
                 value: "\d+"
-      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\Repository\Administrable\FieldController
       action: deleteAction
     
     # entity
