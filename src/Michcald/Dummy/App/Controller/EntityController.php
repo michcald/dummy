@@ -13,20 +13,20 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $this->repositoryDao = new \Michcald\Dummy\App\Dao\Repository();
     }
 
-    private function findRepository($repositoryName)
+    private function findRepository($repositoryId)
     {
         $repoQuery = new \Michcald\Dummy\Dao\Query();
-        $repoQuery->addWhere('name', $repositoryName);
+        $repoQuery->addWhere('id', $repositoryId);
 
         return $this->repositoryDao->findOne($repoQuery);
     }
 
-    public function listAction($repositoryName)
+    public function listAction($repositoryId)
     {
-        $repository = $this->findRepository($repositoryName);
+        $repository = $this->findRepository($repositoryId);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryId);
         }
 
         $this->dao->setRepository($repository);
@@ -38,7 +38,6 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $orders = $this->getRequest()->getQueryParam('orders', array());
 
         $form = new \Michcald\Dummy\App\Form\ListForm();
-        $form->setRepository($repository);
 
         $form->setValues(array(
             'page' => $page,

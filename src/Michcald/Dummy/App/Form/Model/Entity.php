@@ -4,7 +4,7 @@ namespace Michcald\Dummy\App\Form\Model;
 
 use Michcald\Dummy\App\Model\Repository;
 
-class Entity extends \Michcald\Dummy\Form
+class Entity extends \Michcald\Form
 {
     public function __construct(Repository $repository)
     {
