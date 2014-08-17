@@ -190,9 +190,43 @@ routes:
           pattern: "repository/{repositoryId}/entity"
           requirements:
               - param: repositoryId
-                value: "[a-z0-9_]*"
+                value: \d+
       controller: \Michcald\Dummy\App\Controller\EntityController
       action: listAction
+
+    - name: dummy.entity.create
+      methods: ["POST"]
+      uri:
+          pattern: "repository/{repositoryId}/entity"
+          requirements:
+              - param: repositoryId
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: createAction
+
+    - name: dummy.entity.read
+      methods: ["GET"]
+      uri:
+          pattern: "repository/{repositoryId}/entity/{id}"
+          requirements:
+              - param: repositoryId
+                value: \d+
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: readAction
+
+    - name: dummy.entity.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: "repository/{repositoryId}/entity/{id}"
+          requirements:
+              - param: repositoryId
+                value: \d+
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: deleteAction
 
     # default
     

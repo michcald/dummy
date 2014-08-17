@@ -6,14 +6,15 @@ use Michcald\Dummy\App\Model\Repository;
 
 class Entity extends \Michcald\Form
 {
-    public function __construct(Repository $repository)
+    public function __construct(array $fields)
     {
         $requiredValidator = new \Michcald\Validator\NotEmpty();
 
         $fkValidator = new \Michcald\Validator\String();
         $fkValidator->setRegex('^\d+$');
 
-        foreach ($repository->getFields() as $field) {
+        /* @var $field Repository\Field */
+        foreach ($fields as $field) {
 
             if ($field->getName() == 'id') {
                 continue;

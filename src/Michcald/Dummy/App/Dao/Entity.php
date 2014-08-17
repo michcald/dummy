@@ -24,8 +24,10 @@ class Entity extends \Michcald\Dummy\Dao
         $entity->setRepository($this->repository);
 
         if ($row) {
-            $entity->setId($row['id']);
-            unset($row['id']);
+            if (isset($row['id'])) {
+                $entity->setId($row['id']);
+                unset($row['id']);
+            }
             $entity->setValues($row);
         }
 
@@ -37,5 +39,12 @@ class Entity extends \Michcald\Dummy\Dao
         // TODO save and substitute files with string
 
         return parent::persist($entity);
+    }
+
+    public function delete($entity)
+    {
+        // TODO remove children and files
+
+        parent::delete($entity);
     }
 }
