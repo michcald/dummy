@@ -1,6 +1,0 @@
-database:
-    adapter: MYSQL
-    host: localhost
-    user: michael
-    password: 123456
-    dbname: dummy

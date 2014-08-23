@@ -1,0 +1,6 @@
+test:
+    dummy:
+        endpoint: http://localhost/dummy2/dummy2/
+        auth:
+            username: dummy
+            password: dummy

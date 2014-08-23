@@ -14,10 +14,9 @@ abstract class String
 
         return $str;
     }
-    
+
     public static function underscoresToCamelCase($string, $capitalizeFirstCharacter = false)
     {
-
         $str = str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
 
         if (!$capitalizeFirstCharacter) {

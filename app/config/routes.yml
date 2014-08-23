@@ -1,125 +1,241 @@
 routes:
     
-    - name: dummy.info
+    # app
+
+    - name: dummy.app.whoami
       methods: ["GET"]
       uri:
-          pattern: api/_info
+          pattern: whoami
           requirements: []
-      controller: \Michcald\Dummy\Controller\DummyController
-      action: infoAction
+      controller: \Michcald\Dummy\App\Controller\AppController
+      action: whoAmIAction
     
-    - name: dummy.repo.info
+    - name: dummy.app.list
       methods: ["GET"]
       uri:
-          pattern: api/{repository}/_info
-          requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
-      action: infoAction
-
-    - name: dummy.repo.update
-      methods: ["PUT"]
-      uri:
-          pattern: api/{repository}/{id}
-          requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
-              - param: id
-                value: \d+
-      controller: \Michcald\Dummy\Controller\RepositoryController
-      action: updateAction
-
-    - name: dummy.repo.list
-      methods: ["GET"]
-      uri:
-          pattern: api/{repository}
-          requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+          pattern: app
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: listAction
-
-    - name: dummy.repo.read
+    
+    - name: dummy.app.read
       methods: ["GET"]
       uri:
-          pattern: api/{repository}/{id}
+          pattern: app/{id}
           requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
               - param: id
-                value: \d+
-      controller: \Michcald\Dummy\Controller\RepositoryController
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: readAction
 
-    - name: dummy.repo.create
+    - name: dummy.app.create
       methods: ["POST"]
       uri:
-          pattern: api/{repository}
-          requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
-      controller: \Michcald\Dummy\Controller\RepositoryController
+          pattern: app
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
       action: createAction
 
-    - name: dummy.repo.delete
+    - name: dummy.app.update
+      methods: ["PUT"]
+      uri:
+          pattern: app/{id}
+          requirements:
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
+      action: updateAction
+
+    - name: dummy.app.delete
       methods: ["DELETE"]
       uri:
-          pattern: api/{repository}/{id}
+          pattern: app/{id}
           requirements:
-              - param: repository
-                value: "[a-z0-9_]+"
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\Administrable\AppController
+      action: deleteAction
+
+    # app grant
+
+    - name: dummy.grant.list
+      methods: ["GET"]
+      uri:
+          pattern: grant
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\Administrable\GrantController
+      action: listAction
+    
+    - name: dummy.grant.read
+      methods: ["GET"]
+      uri:
+          pattern: grant/{id}
+          requirements:
               - param: id
                 value: \d+
-      controller: \Michcald\Dummy\Controller\RepositoryController
+      controller: \Michcald\Dummy\App\Controller\Administrable\GrantController
+      action: readAction
+
+    - name: dummy.grant.update
+      methods: ["PUT"]
+      uri:
+          pattern: grant/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\Administrable\GrantController
+      action: updateAction
+    
+    # repository
+    
+    - name: dummy.repository.create
+      methods: ["POST"]
+      uri:
+          pattern: repository
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\Administrable\RepositoryController
+      action: createAction
+    
+    - name: dummy.repository.read
+      methods: ["GET"]
+      uri:
+          pattern: repository/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      action: readAction
+    
+    - name: dummy.repository.list
+      methods: ["GET"]
+      uri:
+          pattern: repository
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\RepositoryController
+      action: listAction
+      
+    - name: dummy.repository.update
+      methods: ["PUT"]
+      uri:
+          pattern: repository/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\Administrable\RepositoryController
+      action: updateAction
+      
+    - name: dummy.repository.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: repository/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\Administrable\RepositoryController
       action: deleteAction
 
-    - name: dummy.cli.info
-      methods: ["CLI"]
+    # repository field
+    
+    - name: dummy.repository.field.create
+      methods: ["POST"]
       uri:
-          pattern: info
+          pattern: repository_field
           requirements: []
-      controller: \Michcald\Dummy\Controller\Cli\DummyController
-      action: infoAction
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
+      action: createAction
+    
+    - name: dummy.repository.field.read
+      methods: ["GET"]
+      uri:
+          pattern: repository_field/{id}
+          requirements:
+              - param: id
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\Repository\FieldController
+      action: readAction
+    
+    - name: dummy.repository.field.list
+      methods: ["GET"]
+      uri:
+          pattern: repository_field
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\Repository\FieldController
+      action: listAction
+      
+    - name: dummy.repository.field.update
+      methods: ["PUT"]
+      uri:
+          pattern: repository_field/{id}
+          requirements:
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
+      action: updateAction
+      
+    - name: dummy.repository.field.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: repository_field/{id}
+          requirements:
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
+      action: deleteAction
 
-    - name: dummy.cli.repo.create
-      methods: ["CLI"]
+    # entity
+
+    - name: dummy.entity.list
+      methods: ["GET"]
       uri:
-          pattern: dummy:repo:create
-          requirements: []
-      controller: \Michcald\Dummy\Controller\Cli\DummyController
+          pattern: "repository/{repositoryId}/entity"
+          requirements:
+              - param: repositoryId
+                value: \d+
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: listAction
+
+    - name: dummy.entity.create
+      methods: ["POST"]
+      uri:
+          pattern: "repository/{repositoryId}/entity"
+          requirements:
+              - param: repositoryId
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
       action: createAction
 
-    - name: dummy.cli.repo.delete
-      methods: ["CLI"]
+    - name: dummy.entity.read
+      methods: ["GET"]
       uri:
-          pattern: dummy:repo:delete
-          requirements: []
-      controller: \Michcald\Dummy\Controller\Cli\DummyController
+          pattern: "repository/{repositoryId}/entity/{id}"
+          requirements:
+              - param: repositoryId
+                value: \d+
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: readAction
+
+    - name: dummy.entity.delete
+      methods: ["DELETE"]
+      uri:
+          pattern: "repository/{repositoryId}/entity/{id}"
+          requirements:
+              - param: repositoryId
+                value: \d+
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
       action: deleteAction
 
-    - name: dummy.cli.db.install
-      methods: ["CLI"]
-      uri:
-          pattern: dummy:db:install
-          requirements: []
-      controller: \Michcald\Dummy\Controller\Cli\DbController
-      action: installAction
-
-    - name: dummy.cli.db.drop
-      methods: ["CLI"]
-      uri:
-          pattern: dummy:db:drop
-          requirements: []
-      controller: \Michcald\Dummy\Controller\Cli\DbController
-      action: dropAction
-
-    - name: not_found
-      methods: ["CLI", "GET", "POST", "PUT", "DELETE", "LINK", "UNLINK", "PATCH", "OPTIONS"]
+    # default
+    
+    - name: dummy.not_found
+      methods: ["GET","POST","PUT","DELETE","OPTIONS","PATCH","HEAD"]
       uri:
           pattern: "{any}"
           requirements:
               - param: any
                 value: ".*"
-      controller: \Michcald\Dummy\Controller\DummyController
+      controller: \Michcald\Dummy\App\Controller\DummyController
       action: notFoundAction

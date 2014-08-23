@@ -1,4 +1,5 @@
-RewriteEngine On
+Options FollowSymLinks
 
+RewriteEngine On
 RewriteRule ^(.*)$ pub/index.php
 
