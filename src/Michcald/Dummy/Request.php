@@ -30,11 +30,18 @@ class Request extends \Michcald\Mvc\Request
             ->setUri($uri);
     }
 
+    private function isHttps()
+    {
+        return ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443);
+    }
+
     private function buildHttpRequest()
     {
         $baseUrl = Config::getInstance()->base_url;
 
-        $url = sprintf('http://%s%s', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
+        $protocol = $this->isHttps() ? 'https' : 'http';
+
+        $url = sprintf('%s://%s%s', $protocol, $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
 
         $uri = str_replace($baseUrl, '', $url);
         $uri = str_replace('?' . $_SERVER['QUERY_STRING'], '', $uri);
