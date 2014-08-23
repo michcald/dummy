@@ -59,7 +59,7 @@ class Repository extends \Michcald\Dummy\Dao
         $db->beginTransaction();
 
         $sql = sprintf(
-            'DROP TABLE IF EXISTS %s;',
+            'DROP TABLE IF EXISTS `%s`;',
             $repository->getName()
         );
 
