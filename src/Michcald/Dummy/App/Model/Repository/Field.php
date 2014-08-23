@@ -26,6 +26,8 @@ class Field extends \Michcald\Dummy\Model
 
     private $displayOrder;
 
+    private $foreignTable;
+
     public function setRepositoryId($repositoryId)
     {
         $this->repositoryId = $repositoryId;
@@ -170,6 +172,18 @@ class Field extends \Michcald\Dummy\Model
         return $this;
     }
 
+    public function setForeignTable($foreignTable)
+    {
+        $this->foreignTable = $foreignTable;
+
+        return $this;
+    }
+
+    public function getForeignTable()
+    {
+        return $this->foreignTable;
+    }
+
     public function validate($value)
     {
         $this->validationErrors = array();
@@ -200,6 +214,7 @@ class Field extends \Michcald\Dummy\Model
             'repository_id' => $this->repositoryId,
             'name' => $this->name,
             'type' => $this->type,
+            'foreign_table' => $this->foreignTable,
             'label' => $this->label,
             'description' => $this->description,
             'required' => $this->required,

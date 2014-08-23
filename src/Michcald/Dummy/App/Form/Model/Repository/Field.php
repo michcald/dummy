@@ -30,6 +30,10 @@ class Field extends \Michcald\Form
         }
         $this->addElement($type);
 
+        $foreignTable = new \Michcald\Form\Element\Text();
+        $foreignTable->setName('foreign_table');
+        $this->addElement($foreignTable);
+
         $val = new \Michcald\Validator\String();
         $val->setRegex('^[a-z][_a-z0-9]*$');
 
@@ -83,5 +87,18 @@ class Field extends \Michcald\Form
         $displayOrder->setName('display_order')
             ->addValidator($val);
         $this->addElement($displayOrder);
+    }
+
+    public function isValid()
+    {
+        $values = $this->getValues();
+
+        if (isset($values['type']) && $values['type'] == 'foreign') {
+            $this->getElement('foreign_table')
+                ->addValidator(new \Michcald\Validator\NotEmpty());
+            // @TODO validation with existent repos
+        }
+
+        return parent::isValid();
     }
 }

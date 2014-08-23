@@ -26,6 +26,10 @@ class Field extends \Michcald\Dummy\Dao
             if (isset($row['id'])) {
                 $field->setId($row['id']);
             }
+
+            if ($row['type'] == 'foreign' && isset($row['foreign_table'])) {
+                $field->setForeignTable($row['foreign_table']);
+            }
         }
 
         return $field;
@@ -109,7 +113,7 @@ class Field extends \Michcald\Dummy\Dao
                     'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s(%s) %s',
                     $repository['name'],
                     $model->getName(),
-                    $model->getName(),
+                    $model->getForeignTable(),
                     'id',
                     $model->isRequired() ? 'ON DELETE CASCADE' : 'ON DELETE SET NULL'
                 ));
@@ -151,7 +155,7 @@ class Field extends \Michcald\Dummy\Dao
                 'dbname' => \Michcald\Dummy\Config::getInstance()->database['dbname'],
                 'table'  => $repository['name'],
                 'column' => $model->getName(),
-                'referencedTable' => $model->getName(),
+                'referencedTable' => $model->getForeignTable(),
                 'referencedColumn' => 'id'
             ));
 

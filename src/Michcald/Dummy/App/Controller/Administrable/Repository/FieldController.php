@@ -23,7 +23,7 @@ class FieldController extends Crud implements Administrable
         if ($form->isValid()) {
 
             $values = $form->getValues();
-
+            
             $query = new \Michcald\Dummy\Dao\Query();
             $query->addWhere('name', $values['name'])
                 ->addWhere('repository_id', $values['repository_id']);
