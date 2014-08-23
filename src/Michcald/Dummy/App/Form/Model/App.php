@@ -19,16 +19,38 @@ class App extends \Michcald\Form
             ->addValidator($val3);
         $this->addElement($name);
 
+        $title = new \Michcald\Form\Element\Text();
+        $title->setName('title')
+            ->addValidator(new \Michcald\Validator\NotEmpty());
+        $this->addElement($title);
+
         $description = new \Michcald\Form\Element\Text();
         $description->setName('description');
         $this->addElement($description);
-        
+
+        $baseUrl = new \Michcald\Form\Element\Text();
+        $baseUrl->setName('base_url')
+            ->addValidator(new \Michcald\Validator\NotEmpty());
+        $this->addElement($baseUrl);
+
         $val = new \Michcald\Validator\String();
         $val->setRegex('^[01]$');
-        
+
         $admin = new \Michcald\Form\Element\Text();
         $admin->setName('is_admin')
                 ->addValidator($val);
         $this->addElement($admin);
+
+        $publicKey = new \Michcald\Form\Element\Text();
+        $publicKey->setName('public_key')
+            ->addValidator(new \Michcald\Validator\NotEmpty())
+            ->addValidator($val1);
+        $this->addElement($publicKey);
+
+        $privateKey = new \Michcald\Form\Element\Text();
+        $privateKey->setName('private_key')
+            ->addValidator(new \Michcald\Validator\NotEmpty())
+            ->addValidator($val1);
+        $this->addElement($privateKey);
     }
 }

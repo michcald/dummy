@@ -32,6 +32,9 @@ abstract class Bootstrap
         $listener = new Event\Listener\Monolog();
         $mvc->addEventSubscriber($listener);
 
+        $listener = new Event\Listener\Auth();
+        $mvc->addEventSubscriber($listener);
+
         $listener = new Event\Listener\Administrable();
         $mvc->addEventSubscriber($listener);
     }

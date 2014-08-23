@@ -4,6 +4,10 @@ namespace Michcald\Dummy\App\Model\Repository;
 
 class Field extends \Michcald\Dummy\Model
 {
+    private $repositoryId;
+
+    private $type;
+
     private $name;
 
     private $label;
@@ -21,6 +25,30 @@ class Field extends \Michcald\Dummy\Model
     private $list = false;
 
     private $displayOrder;
+
+    public function setRepositoryId($repositoryId)
+    {
+        $this->repositoryId = $repositoryId;
+
+        return $this;
+    }
+
+    public function getRepositoryId()
+    {
+        return $this->repositoryId;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
 
     public function setName($name)
     {
@@ -60,7 +88,7 @@ class Field extends \Michcald\Dummy\Model
 
     public function setRequired($required)
     {
-        $this->required = (bool)$required;
+        $this->required = (int)$required;
 
         return $this;
     }
@@ -72,7 +100,7 @@ class Field extends \Michcald\Dummy\Model
 
     public function setSearchable($searchable)
     {
-        $this->searchable = (bool)$searchable;
+        $this->searchable = (int)$searchable;
 
         return $this;
     }
@@ -84,7 +112,7 @@ class Field extends \Michcald\Dummy\Model
 
     public function setSortable($sortable)
     {
-        $this->sortable = (bool)$sortable;
+        $this->sortable = (int)$sortable;
 
         return $this;
     }
@@ -96,7 +124,7 @@ class Field extends \Michcald\Dummy\Model
 
     public function setMain($main)
     {
-        $this->main = (bool)$main;
+        $this->main = (int)$main;
 
         return $this;
     }
@@ -108,7 +136,7 @@ class Field extends \Michcald\Dummy\Model
 
     public function setList($list)
     {
-        $this->list = (bool)$list;
+        $this->list = (int)$list;
 
         return $this;
     }
@@ -147,7 +175,7 @@ class Field extends \Michcald\Dummy\Model
         $this->validationErrors = array();
 
         if ($this->isRequired() && !$value) {
-            if ($this->getDiscriminator() == 'boolean') {
+            if ($this->getType() == 'boolean') {
                 $value = 0;
             } else {
                 $this->validationErrors[] = 'Required field';
@@ -169,15 +197,17 @@ class Field extends \Michcald\Dummy\Model
     {
         $array = array(
             'id' => $this->getId(),
-            'name' => $this->getName(),
-            'type' => $this->getDiscriminator(),
-            'label' => $this->getLabel(),
-            'description' => $this->getDescription(),
-            'required' => $this->isRequired(),
-            'searchable' => $this->isSearchable(),
-            'sortable' => $this->isSortable(),
-            'list'        => $this->isList(),
-            'display_order' => $this->getDisplayOrder()
+            'repository_id' => $this->repositoryId,
+            'name' => $this->name,
+            'type' => $this->type,
+            'label' => $this->label,
+            'description' => $this->description,
+            'required' => $this->required,
+            'searchable' => $this->searchable,
+            'sortable' => $this->sortable,
+            'list' => $this->list,
+            'main' => $this->main,
+            'display_order' => $this->displayOrder
         );
 
         return $array;

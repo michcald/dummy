@@ -5,28 +5,30 @@ namespace Michcald\Dummy\App\Controller;
 class EntityController extends \Michcald\Mvc\Controller\HttpController
 {
     private $repositoryDao;
+    private $repositoryFieldDao;
     private $dao;
 
     public function __construct()
     {
         $this->dao = new \Michcald\Dummy\App\Dao\Entity();
         $this->repositoryDao = new \Michcald\Dummy\App\Dao\Repository();
+        $this->repositoryFieldDao = new \Michcald\Dummy\App\Dao\Repository\Field();
     }
 
-    private function findRepository($repositoryName)
+    private function findRepository($repositoryId)
     {
         $repoQuery = new \Michcald\Dummy\Dao\Query();
-        $repoQuery->addWhere('name', $repositoryName);
+        $repoQuery->addWhere('id', $repositoryId);
 
         return $this->repositoryDao->findOne($repoQuery);
     }
 
-    public function listAction($repositoryName)
+    public function listAction($repositoryId)
     {
-        $repository = $this->findRepository($repositoryName);
+        $repository = $this->findRepository($repositoryId);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryId);
         }
 
         $this->dao->setRepository($repository);
@@ -38,7 +40,6 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $orders = $this->getRequest()->getQueryParam('orders', array());
 
         $form = new \Michcald\Dummy\App\Form\ListForm();
-        $form->setRepository($repository);
 
         $form->setValues(array(
             'page' => $page,
@@ -104,12 +105,12 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         }
     }
 
-    public function readAction($repositoryName, $id)
+    public function readAction($repositoryId, $id)
     {
-        $repository = $this->findRepository($repositoryName);
+        $repository = $this->findRepository($repositoryId);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryId);
         }
 
         $this->dao->setRepository($repository);
@@ -130,18 +131,25 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         return $response;
     }
 
-    public function createAction($repositoryName)
+    public function createAction($repositoryId)
     {
-        $repository = $this->findRepository($repositoryName);
+        $repository = $this->findRepository($repositoryId);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryId);
         }
 
         $this->dao->setRepository($repository);
 
+        // find all the fields
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $repository->getId())
+            ->addOrder('display_order', 'ASC')
+            ->setLimit(10000);
+        $fields = $this->repositoryFieldDao->findAll($query);
+
         $form = new \Michcald\Dummy\App\Form\Model\Entity(
-            $repository
+            $fields->getResults()
         );
 
         $form->setValues($this->getRequest()->getData());
@@ -160,9 +168,26 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
 
         } else {
 
-            return new \Michcald\Dummy\Response\Json\BadRequest(
-                $form->getErrorMessages()
-            );
+            $values = $form->getValues();
+
+            $formErrors = array();
+            foreach ($form->getElements() as $element) {
+                $formErrors[$element->getName()] = array(
+                    'value' => $values[$element->getName()],
+                    'errors' => $element->getErrorMessages()
+                );
+            }
+
+            $response = new \Michcald\Dummy\Response\Json();
+            $response->setStatusCode(400)
+                ->setContent(array(
+                    'error' => array(
+                        'status_code' => 400,
+                        'message' => 'Data not valid',
+                        'form' => $formErrors
+                    )
+                ));
+            return $response;
 
         }
     }
@@ -184,12 +209,12 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         // use the form
     }
 
-    public function deleteAction($repositoryName, $id)
+    public function deleteAction($repositoryId, $id)
     {
-        $repository = $this->findRepository($repositoryName);
+        $repository = $this->findRepository($repositoryId);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryId);
         }
 
         $this->dao->setRepository($repository);

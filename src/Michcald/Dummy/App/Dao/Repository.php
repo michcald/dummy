@@ -12,50 +12,63 @@ class Repository extends \Michcald\Dummy\Dao
     public function persist($repository)
     {
         $db = $this->getDb();
-        
-        $stm = $db->prepare('SELECT app_id FROM meta_app_grant WHERE repository_id=:repoId');
+
+        $stm = $db->prepare(
+            'SELECT id app_id '
+            . 'FROM meta_app '
+            . 'WHERE id NOT IN ('
+                . 'SELECT app_id FROM meta_app_grant WHERE repository_id=:repositoryId'
+            . ')');
         $stm->execute(array(
-            'repoId' => $repository->getId()
+            'repositoryId' => $repository->getId()
         ));
-        
+
         $db->beginTransaction();
-        
+
         parent::persist($repository);
-        
+
         // create the related table
         $sql = sprintf(
-            'CREATE TABLE IF NOT EXISTS %s (`id` INTEGER NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`));', 
+            'CREATE TABLE IF NOT EXISTS %s (`id` INTEGER NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`));',
             $repository->getName()
         );
         $db->query($sql);
-        
+
         // for every application create a record for the grants
         foreach ($stm->fetchAll(\PDO::FETCH_ASSOC) as $app) {
-            $db->prepare('INSERT INTO meta_app_grant (app_id,repository_id) VALUES (?,?)');
-            $db->exec(array(
+            $stm2 = $db->prepare(
+                'INSERT INTO meta_app_grant (`app_id`,`repository_id`,`create`,`read`,`update`,`delete`) '
+                . 'VALUES (?,?,?,?,?,?)');
+            $stm2->execute(array(
                 $app['app_id'],
-                $repository->getId()
+                $repository->getId(),
+                $app['app_id'] == 1 ? 1 : 0,
+                $app['app_id'] == 1 ? 1 : 0,
+                $app['app_id'] == 1 ? 1 : 0,
+                $app['app_id'] == 1 ? 1 : 0
             ));
         }
-        
+
         $db->commit();
     }
 
     public function delete($repository)
     {
         $db = $this->getDb();
-        
+
         $db->beginTransaction();
-        
+
         $sql = sprintf(
             'DROP TABLE IF EXISTS %s;',
             $repository->getName()
         );
-        
+
         $db->query($sql);
-        
+
+        // remove all the grants on cascade
+
         parent::delete($repository);
-        
+
         $db->commit();
     }
 
@@ -75,5 +88,51 @@ class Repository extends \Michcald\Dummy\Dao
         }
 
         return $repository;
+    }
+
+    public function findAllGranted(\Michcald\Dummy\App\Model\App $app, array $filters, array $orders, $limit = 30, $offset = 0)
+    {
+        $orderBy = array();
+        foreach ($orders as $field => $direction) {
+            $orderBy[] = sprintf('%s %s', $field, $direction);
+        }
+        if (count($orderBy) > 0) {
+            $orderBy = ' AND ' . implode(',', $orderBy);
+        } else {
+            $orderBy = '';
+        }
+
+        $where = array();
+        foreach ($filters as $field => $value) {
+            $where[] = sprintf('%s=%s', $field, $value);
+        }
+        if (count($where) > 0) {
+            $where = ' AND ' . implode(' AND ', $where);
+        } else {
+            $where = '';
+        }
+
+        $sql = sprintf('SELECT t2.* FROM meta_app_grant t1,meta_repository t2 '
+            . 'WHERE t1.repository_id=t2.id AND t1.read=1 AND t1.app_id=? %s %s',
+            $orderBy,
+            $where
+        );
+
+        $stm = $this->getDb()->prepare($sql);
+        $stm->execute(array(
+            $app->getId()
+        ));
+
+        $daoResult = new \Michcald\Dummy\Dao\Result();
+        $daoResult->setTotalHits($stm->rowCount());
+
+        $results = $stm->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($results as $result) {
+            $model = $this->create($result);
+            $daoResult->addResult($model);
+        }
+
+        return $daoResult;
     }
 }

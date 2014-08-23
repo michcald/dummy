@@ -8,7 +8,7 @@ use Michcald\Dummy\Controller\Crud;
 use Michcald\Dummy\Response\Json as JsonResponse;
 use Michcald\Dummy\Response\Error\NotFoundResponse;
 
-class RepositoryController extends Crud implements Administrable
+class RepositoryController extends Crud
 {
     private $dao;
 
@@ -17,80 +17,16 @@ class RepositoryController extends Crud implements Administrable
         $this->dao = new \Michcald\Dummy\App\Dao\Repository();
     }
 
-    public function createAction()
-    {
-        // @TODO verify if the app is admin flagged
-        
-        $form = new \Michcald\Dummy\App\Form\Model\Repository();
-
-        $form->setValues($this->getRequest()->getData());
-
-        if ($form->isValid()) {
-
-            $values = $form->getValues();
-            
-            // @TODO verify if already exists
-            $query = new \Michcald\Dummy\Dao\Query();
-            $query->addWhere('name', $values['name']);
-            $result = $this->dao->findOne($query);
-            
-            if ($result) {
-                $response = new JsonResponse();
-                $response->setStatusCode(409) // conflict
-                    ->setContent(array(
-                        'error' => array(
-                            'status_code' => 409,
-                            'message' => 'The repository already exists'
-                        )
-                    ));
-                return $response;
-            }
-            
-            $repository = $this->dao->create($values);
-
-            $this->dao->persist($repository);
-
-            $response = new JsonResponse();
-            $response->setStatusCode(201)
-                ->setContent($repository->getName());
-
-            return $response;
-
-        } else {
-            
-            $values = $form->getValues();
-            
-            $formErrors = array();
-            foreach ($form->getElements() as $element) {
-                $formErrors[$element->getName()] = array(
-                    'value' => $values[$element->getName()],
-                    'errors' => $element->getErrorMessages()
-                );
-            }
-            
-            $response = new \Michcald\Dummy\Response\Json();
-            $response->setStatusCode(400)
-                ->setContent(array(
-                    'error' => array(
-                        'status_code' => 400,
-                        'message' => 'Data not valid',
-                        'form' => $formErrors
-                    )
-                ));
-            return $response;
-        }
-    }
-
-    public function readAction($name)
+    public function readAction($id)
     {
         $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('name', $name)
+        $query->addWhere('id', $id)
             ->setLimit(1);
 
         $repository = $this->dao->findOne($query);
 
         if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $name);
+            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $id);
         }
 
         $response = new \Michcald\Dummy\Response\Json();
@@ -133,19 +69,13 @@ class RepositoryController extends Crud implements Administrable
             $paginator->setItemsPerPage($values['limit'])
                 ->setCurrentPageNumber($values['page']);
 
-            $entityQuery = new \Michcald\Dummy\Dao\Query();
-            $entityQuery->setLimit($paginator->getLimit())
-                ->setOffset($paginator->getOffset());
-
-            foreach ($values['filters'] as $filter) {
-                $entityQuery->addWhere($filter['field'], $filter['value']);
-            }
-
-            foreach ($values['orders'] as $order) {
-                $entityQuery->addOrder($order['field'], $order['direction']);
-            }
-
-            $daoResult = $this->dao->findAll($entityQuery);
+            $daoResult = $this->dao->findAllGranted(
+                $this->getApp(),
+                $values['filters'],
+                $values['orders'],
+                $paginator->getLimit(),
+                $paginator->getOffset()
+            );
 
             $paginator->setTotalItems($daoResult->getTotalHits());
 
@@ -173,32 +103,6 @@ class RepositoryController extends Crud implements Administrable
             return new \Michcald\Dummy\Response\Json\BadRequest(
                 $form->getErrorMessages());
         }
-    }
-
-    public function updateAction($name)
-    {
-        // @TODO verify if the app is admin flagged
-    }
-
-    public function deleteAction($name)
-    {
-        // @TODO verify if the app is admin flagged
-        $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('name', $name);
-
-        $repository = $this->dao->findOne($query);
-
-        if (!$repository) {
-            return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $name);
-        }
-
-        $this->dao->delete($repository);
-
-        $response = new \Michcald\Dummy\Response\Json();
-
-        $response->setStatusCode(204);
-
-        return $response;
     }
 
 }

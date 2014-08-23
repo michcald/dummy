@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS meta_repository_field (
     `sortable` TINYINT NOT NULL DEFAULT 0,
     `main` TINYINT NOT NULL DEFAULT 0,
     `list` TINYINT NOT NULL DEFAULT 0,
-    `type` INTEGER NOT NULL,
+    `type` VARCHAR(255) NOT NULL,
+    `display_order` INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`repository_id`) REFERENCES `meta_repository`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -38,8 +39,10 @@ CREATE TABLE IF NOT EXISTS meta_repository_field (
 CREATE TABLE IF NOT EXISTS meta_app (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
     `description` TEXT NULL,
     `is_admin` TINYINT NOT NULL DEFAULT 0,
+    `base_url` VARCHAR(255) NOT NULL,
     `public_key` VARCHAR(64) NOT NULL,
     `private_key` VARCHAR(64) NOT NULL,
     UNIQUE(`name`),
@@ -50,12 +53,12 @@ CREATE TABLE IF NOT EXISTS meta_app (
 
 /* insert default application */
 
-INSERT INTO `meta_app` (`name`,`description`,`is_admin`,`public_key`,`private_key`) VALUES ("dummy_app","Default application",1,"829c3804401b0727f70f73d4415e162400cbe57b","f64133af6818761d95c8230953e5c9ddee1d0cf3");
+INSERT INTO `meta_app` (`name`,`title`,`description`,`is_admin`,`base_url`,`public_key`,`private_key`) VALUES ("dummy_app","Dummy App","Default application",1,"http://localhost/~michael/dummy-client/","dummy_app","dummy_app");
 
 /*
  * meta_app_grants
  */
-CREATE TABLE IF NOT EXISTS meta_app_grants (
+CREATE TABLE IF NOT EXISTS meta_app_grant (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `app_id` INTEGER NOT NULL,
     `repository_id` INTEGER NOT NULL,
