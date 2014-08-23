@@ -111,10 +111,9 @@ class Field extends \Michcald\Dummy\Dao
                     $model->getName(),
                     $model->getName(),
                     'id',
-                    $model->isRequired() ? 'ON DELETE CASCADE' : ''
+                    $model->isRequired() ? 'ON DELETE CASCADE' : 'ON DELETE SET NULL'
                 ));
             }
-
         }
 
         $db->commit();
