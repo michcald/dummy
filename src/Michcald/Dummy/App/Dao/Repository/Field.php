@@ -106,11 +106,12 @@ class Field extends \Michcald\Dummy\Dao
 
             if ($model->getType() == 'foreign') {
                 $db->exec(sprintf(
-                    'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s(%s) ON DELETE CASCADE',
+                    'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s(%s) %s',
                     $repository['name'],
                     $model->getName(),
                     $model->getName(),
-                    'id'
+                    'id',
+                    $model->isRequired() ? 'ON DELETE CASCADE' : ''
                 ));
             }
 
@@ -134,6 +135,35 @@ class Field extends \Michcald\Dummy\Dao
         $db->beginTransaction();
 
         parent::delete($model);
+
+        if ($model->getType() == 'foreign') {
+
+            // retrieve foreign key name
+            $stm = $db->prepare('select TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME '
+                . 'from INFORMATION_SCHEMA.KEY_COLUMN_USAGE '
+                . 'where TABLE_SCHEMA = :dbname '
+                . 'and TABLE_NAME = :table '
+                . 'and COLUMN_NAME = :column '
+                . 'and REFERENCED_TABLE_NAME = :referencedTable '
+                . 'and REFERENCED_COLUMN_NAME = :referencedColumn '
+                . 'limit 1'
+            );
+            $stm->execute(array(
+                'dbname' => \Michcald\Dummy\Config::getInstance()->database['dbname'],
+                'table'  => $repository['name'],
+                'column' => $model->getName(),
+                'referencedTable' => $model->getName(),
+                'referencedColumn' => 'id'
+            ));
+
+            $foreignKey = $stm->fetch(\PDO::FETCH_ASSOC);
+
+            $db->exec(sprintf(
+                'ALTER TABLE %s DROP FOREIGN KEY %s',
+                $repository['name'],
+                $foreignKey['CONSTRAINT_NAME']
+            ));
+        }
 
         $db->exec(sprintf(
             'ALTER TABLE %s DROP %s',
