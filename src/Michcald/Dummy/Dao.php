@@ -99,6 +99,9 @@ abstract class Dao
                     continue;
                 }
                 $chunks[] = sprintf('`%s`', $key);
+                if ($value === null) {
+                    continue;
+                }
                 $values[] = $value;
             }
 
@@ -109,14 +112,18 @@ abstract class Dao
                 if ($key == 'id') {
                     continue;
                 }
-                $chunks[] = '?';
+                if ($value === null) {
+                    $chunks[] = 'NULL';
+                } else {
+                    $chunks[] = '?';
+                }
             }
 
             $updateSql .= implode(',', $chunks) . ');';
 
             $s = $this->getDb()->prepare($updateSql);
             $s->execute($values);
-
+            
             // last insert id
             /*$stm = $this->getDb()->prepare(
                 sprintf('SELECT MAX(id) FROM %s', $this->getTable())

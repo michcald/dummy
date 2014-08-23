@@ -64,7 +64,7 @@ class RepositoryController extends Crud
         if ($form->isValid()) {
 
             $values = $form->getValues();
-
+            
             $paginator = new \Michcald\Paginator();
             $paginator->setItemsPerPage($values['limit'])
                 ->setCurrentPageNumber($values['page']);

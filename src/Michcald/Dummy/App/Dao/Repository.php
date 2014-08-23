@@ -103,8 +103,8 @@ class Repository extends \Michcald\Dummy\Dao
         }
 
         $where = array();
-        foreach ($filters as $field => $value) {
-            $where[] = sprintf('%s=%s', $field, $value);
+        foreach ($filters as $filter) {
+            $where[] = sprintf('%s="%s"', $filter['field'], $filter['value']);
         }
         if (count($where) > 0) {
             $where = ' AND ' . implode(' AND ', $where);

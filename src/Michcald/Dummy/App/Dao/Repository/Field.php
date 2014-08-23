@@ -103,6 +103,17 @@ class Field extends \Michcald\Dummy\Dao
                 $type,
                 $model->isRequired() ? 'NOT NULL' : 'NULL'
             ));
+
+            if ($model->getType() == 'foreign') {
+                $db->exec(sprintf(
+                    'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s(%s) ON DELETE CASCADE',
+                    $repository['name'],
+                    $model->getName(),
+                    $model->getName(),
+                    'id'
+                ));
+            }
+
         }
 
         $db->commit();
