@@ -45,12 +45,14 @@ class Entity extends \Michcald\Dummy\Dao
 
                     $fieldName = $field->getName();
                     if ($field->getType() == 'file') {
-                        $entity->$fieldName = sprintf(
-                            '%spub/uploads/%d/%s',
-                            \Michcald\Dummy\Config::getInstance()->base_url,
-                            $this->repository->getId(),
-                            $row[$fieldName]
-                        );
+                        if ($entity->$fieldName) {
+                            $entity->$fieldName = sprintf(
+                                '%spub/uploads/%d/%s',
+                                \Michcald\Dummy\Config::getInstance()->base_url,
+                                $this->repository->getId(),
+                                $row[$fieldName]
+                            );
+                        }
                     }
                 }
             }
@@ -90,19 +92,21 @@ class Entity extends \Michcald\Dummy\Dao
                 $entityArray = $entity->toArray();
                 $fileArray = $entityArray[$field->getName()];
 
-                $fileExt = pathinfo($fileArray['name'], PATHINFO_EXTENSION);
+                if (isset($fileArray['name'])) {
+                    $fileExt = pathinfo($fileArray['name'], PATHINFO_EXTENSION);
 
-                $newFilename = md5(uniqid(rand(), true)) . '.' . $fileExt;
-                $newFilePath = $uploadDir . '/' . $newFilename;
+                    $newFilename = md5(uniqid(rand(), true)) . '.' . $fileExt;
+                    $newFilePath = $uploadDir . '/' . $newFilename;
 
-                $res = move_uploaded_file($fileArray['tmp_name'], $newFilePath);
+                    $res = move_uploaded_file($fileArray['tmp_name'], $newFilePath);
 
-                if (!$res) {
-                    throw new \Exception('Cannot save file');
+                    if (!$res) {
+                        throw new \Exception('Cannot save file');
+                    }
+
+                    $key = $field->getName();
+                    $entity->$key = $newFilename;
                 }
-
-                $key = $field->getName();
-                $entity->$key = $newFilename;
             }
         }
 
