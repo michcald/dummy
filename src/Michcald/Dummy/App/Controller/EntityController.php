@@ -155,7 +155,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $form->setValues($this->getRequest()->getData());
 
         if ($form->isValid()) {
-            
+
             $entity = $this->dao->create($form->getValues());
 
             $this->dao->persist($entity);

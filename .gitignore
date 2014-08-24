@@ -1,6 +1,5 @@
 *.lock
 composer.phar
 vendor/
-pub/uploads/
 app/logs/*
 app/config/parameters.yml

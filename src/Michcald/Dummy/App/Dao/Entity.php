@@ -31,19 +31,100 @@ class Entity extends \Michcald\Dummy\Dao
             $entity->setValues($row);
         }
 
+        // find all the fields
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $this->repository->getId())
+            ->addOrder('display_order', 'ASC')
+            ->setLimit(10000);
+        $repositoryFieldDao = new Repository\Field();
+        $fields = $repositoryFieldDao->findAll($query);
+
+        foreach ($fields->getResults() as $field) {
+            if ($field->getType() == 'file') {
+                $fieldName = $field->getName();
+                $entity->$fieldName = sprintf(
+                    '%spub/uploads/%d/%s',
+                    \Michcald\Dummy\Config::getInstance()->base_url,
+                    $this->repository->getId(),
+                    $row[$fieldName]
+                );
+            }
+        }
+
         return $entity;
     }
 
+
+
     public function persist($entity)
     {
-        // TODO save and substitute files with string
+        /* @var $entity \Michcald\Dummy\App\Model\Entity */
+
+        $fieldDao = new Repository\Field();
+
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $this->repository->getId());
+
+        $result = $fieldDao->findAll($query);
+
+        foreach ($result->getResults() as $field) {
+            /* @var $field \Michcald\Dummy\App\Model\Repository\Field */
+            if ($field->getType() == 'file') {
+
+                $uploadDir = __DIR__ . '/../../../../../pub/uploads/' . $this->repository->getId();
+
+                if (!is_dir($uploadDir)) {
+                    $res = mkdir($uploadDir, 0777);
+                    if (!$res) {
+                        throw new \Exception('Need to set 777 on uploads dir');
+                    }
+                }
+
+                $entityArray = $entity->toArray();
+                $fileArray = $entityArray[$field->getName()];
+
+                $fileExt = $ext = pathinfo($fileArray['name'], PATHINFO_EXTENSION);
+
+                $newFilename = md5(uniqid(rand(), true)) . '.' . $fileExt;
+                $newFilePath = $uploadDir . '/' . $newFilename;
+
+                $res = move_uploaded_file($fileArray['tmp_name'], $newFilePath);
+
+                if (!$res) {
+                    throw new \Exception('Cannot save file');
+                }
+
+                $key = $field->getName();
+                $entity->$key = $newFilename;
+            }
+        }
 
         return parent::persist($entity);
     }
 
     public function delete($entity)
     {
-        // TODO remove children and files
+        /* @var $entity \Michcald\Dummy\App\Model\Entity */
+        $entityArray = $entity->toArray();
+
+        $fieldDao = new Repository\Field();
+
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $this->repository->getId());
+
+        $result = $fieldDao->findAll($query);
+
+        foreach ($result->getResults() as $field) {
+            /* @var $field \Michcald\Dummy\App\Model\Repository\Field */
+            if ($field->getType() == 'file') {
+
+                $filePath = __DIR__ . '/../../../../../pub/uploads/' . $this->repository->getId() . '/' . $entityArray[$field->getName()];
+
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+        }
 
         parent::delete($entity);
     }

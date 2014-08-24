@@ -10,9 +10,6 @@ class Entity extends \Michcald\Form
     {
         $requiredValidator = new \Michcald\Validator\NotEmpty();
 
-        $fkValidator = new \Michcald\Validator\String();
-        $fkValidator->setRegex('^\d+$');
-
         /* @var $field Repository\Field */
         foreach ($fields as $field) {
 
@@ -28,16 +25,7 @@ class Entity extends \Michcald\Form
                 $element->addValidator($requiredValidator);
             }
 
-            if ($this->isForeignKey($field)) {
-                $element->addValidator($fkValidator);
-            }
-
             $this->addElement($element);
         }
-    }
-
-    private function isForeignKey($field)
-    {
-        return preg_match('/^.*_id$/', $field->getName());
     }
 }
