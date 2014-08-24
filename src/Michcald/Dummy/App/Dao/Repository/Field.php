@@ -27,8 +27,8 @@ class Field extends \Michcald\Dummy\Dao
                 $field->setId($row['id']);
             }
 
-            if ($row['type'] == 'foreign' && isset($row['foreign_table'])) {
-                $field->setForeignTable($row['foreign_table']);
+            if (isset($row['options'])) {
+                $field->setOptions($row['options']);
             }
         }
 
@@ -63,9 +63,14 @@ class Field extends \Michcald\Dummy\Dao
         switch ($model->getType()) {
             case 'string':
             case 'file':
+            case 'color':
+            case 'email':
+            case 'range':
+            case 'select':
                 $type = 'VARCHAR(255)';
                 break;
             case 'text':
+            case 'url':
                 $type = 'TEXT';
                 break;
             case 'integer':
@@ -80,6 +85,9 @@ class Field extends \Michcald\Dummy\Dao
                 break;
             case 'timestamp':
                 $type = 'TIMESTAMP';
+                break;
+            case 'date':
+                $type = 'DATE';
                 break;
             default:
                 throw new \Exception(sprintf('Invalid type: %s', $model->getType()));

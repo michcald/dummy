@@ -7,12 +7,18 @@ class Field extends \Michcald\Form
     private $types = array(
         'string',
         'text',
+        'select',
         'integer',
         'float',
         'boolean',
         'timestamp',
         'file',
-        'foreign'
+        'foreign',
+        'url',
+        'date',
+        'color',
+        'email',
+        'range'
     );
 
     public function __construct()
@@ -30,9 +36,9 @@ class Field extends \Michcald\Form
         }
         $this->addElement($type);
 
-        $foreignTable = new \Michcald\Form\Element\Text();
-        $foreignTable->setName('foreign_table');
-        $this->addElement($foreignTable);
+        $options = new \Michcald\Form\Element\Text();
+        $options->setName('options');
+        $this->addElement($options);
 
         $val = new \Michcald\Validator\String();
         $val->setRegex('^[a-z][_a-z0-9]*$');
@@ -93,10 +99,13 @@ class Field extends \Michcald\Form
     {
         $values = $this->getValues();
 
-        if (isset($values['type']) && $values['type'] == 'foreign') {
-            $this->getElement('foreign_table')
-                ->addValidator(new \Michcald\Validator\NotEmpty());
-            // @TODO validation with existent repos
+        if (isset($values['type'])) {
+
+            if (in_array($values['type'], array('foreign', 'select', 'number', 'range'))) {
+                $this->getElement('options')
+                    ->addValidator(new \Michcald\Validator\NotEmpty());
+                // @TODO validation with existent repos
+            }
         }
 
         return parent::isValid();

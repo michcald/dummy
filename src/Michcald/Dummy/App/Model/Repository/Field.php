@@ -26,7 +26,7 @@ class Field extends \Michcald\Dummy\Model
 
     private $displayOrder;
 
-    private $foreignTable;
+    private $options;
 
     public function setRepositoryId($repositoryId)
     {
@@ -172,9 +172,9 @@ class Field extends \Michcald\Dummy\Model
         return $this;
     }
 
-    public function setForeignTable($foreignTable)
+    public function setOptions($options)
     {
-        $this->foreignTable = $foreignTable;
+        $this->options = $options;
 
         return $this;
     }
@@ -214,7 +214,7 @@ class Field extends \Michcald\Dummy\Model
             'repository_id' => $this->repositoryId,
             'name' => $this->name,
             'type' => $this->type,
-            'foreign_table' => $this->foreignTable,
+            'options' => $this->options,
             'label' => $this->label,
             'description' => $this->description,
             'required' => $this->required,
