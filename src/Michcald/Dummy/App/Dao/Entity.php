@@ -28,27 +28,33 @@ class Entity extends \Michcald\Dummy\Dao
                 $entity->setId($row['id']);
                 unset($row['id']);
             }
+
             $entity->setValues($row);
-        }
 
-        // find all the fields
-        $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('repository_id', $this->repository->getId())
-            ->addOrder('display_order', 'ASC')
-            ->setLimit(10000);
-        $repositoryFieldDao = new Repository\Field();
-        $fields = $repositoryFieldDao->findAll($query);
+            if ($entity->getId()) {
+                // file handling
 
-        foreach ($fields->getResults() as $field) {
-            if ($field->getType() == 'file') {
-                $fieldName = $field->getName();
-                $entity->$fieldName = sprintf(
-                    '%spub/uploads/%d/%s',
-                    \Michcald\Dummy\Config::getInstance()->base_url,
-                    $this->repository->getId(),
-                    $row[$fieldName]
-                );
+                $query = new \Michcald\Dummy\Dao\Query();
+                $query->addWhere('repository_id', $this->repository->getId())
+                    ->addOrder('display_order', 'ASC')
+                    ->setLimit(10000);
+                $repositoryFieldDao = new Repository\Field();
+                $fields = $repositoryFieldDao->findAll($query);
+
+                foreach ($fields->getResults() as $field) {
+
+                    $fieldName = $field->getName();
+                    if ($field->getType() == 'file') {
+                        $entity->$fieldName = sprintf(
+                            '%spub/uploads/%d/%s',
+                            \Michcald\Dummy\Config::getInstance()->base_url,
+                            $this->repository->getId(),
+                            $row[$fieldName]
+                        );
+                    }
+                }
             }
+
         }
 
         return $entity;
@@ -68,6 +74,7 @@ class Entity extends \Michcald\Dummy\Dao
         $result = $fieldDao->findAll($query);
 
         foreach ($result->getResults() as $field) {
+
             /* @var $field \Michcald\Dummy\App\Model\Repository\Field */
             if ($field->getType() == 'file') {
 
@@ -83,7 +90,7 @@ class Entity extends \Michcald\Dummy\Dao
                 $entityArray = $entity->toArray();
                 $fileArray = $entityArray[$field->getName()];
 
-                $fileExt = $ext = pathinfo($fileArray['name'], PATHINFO_EXTENSION);
+                $fileExt = pathinfo($fileArray['name'], PATHINFO_EXTENSION);
 
                 $newFilename = md5(uniqid(rand(), true)) . '.' . $fileExt;
                 $newFilePath = $uploadDir . '/' . $newFilename;
