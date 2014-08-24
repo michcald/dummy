@@ -99,13 +99,10 @@ class Field extends \Michcald\Form
     {
         $values = $this->getValues();
 
-        if (isset($values['type'])) {
-
-            if (in_array($values['type'], array('foreign', 'select', 'number', 'range'))) {
-                $this->getElement('options')
-                    ->addValidator(new \Michcald\Validator\NotEmpty());
-                // @TODO validation with existent repos
-            }
+        if (isset($values['type']) && $values['type'] == 'foreign') {
+            $this->getElement('options')
+                ->addValidator(new \Michcald\Validator\NotEmpty());
+            // @TODO validation with existent repos
         }
 
         return parent::isValid();

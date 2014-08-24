@@ -179,9 +179,9 @@ class Field extends \Michcald\Dummy\Model
         return $this;
     }
 
-    public function getForeignTable()
+    public function getOptions()
     {
-        return $this->foreignTable;
+        return $this->options;
     }
 
     public function validate($value)

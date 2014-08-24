@@ -117,11 +117,15 @@ class Field extends \Michcald\Dummy\Dao
             ));
 
             if ($model->getType() == 'foreign') {
+
+                $options = $model->getOptions();
+                $foreignTable = $options['repository'];
+
                 $db->exec(sprintf(
                     'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s(%s) %s',
                     $repository['name'],
                     $model->getName(),
-                    $model->getForeignTable(),
+                    $foreignTable,
                     'id',
                     $model->isRequired() ? 'ON DELETE CASCADE' : 'ON DELETE SET NULL'
                 ));
@@ -149,6 +153,9 @@ class Field extends \Michcald\Dummy\Dao
 
         if ($model->getType() == 'foreign') {
 
+            $options = $model->getOptions();
+            $foreignTable = $options['repository'];
+
             // retrieve foreign key name
             $stm = $db->prepare('select TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME '
                 . 'from INFORMATION_SCHEMA.KEY_COLUMN_USAGE '
@@ -163,7 +170,7 @@ class Field extends \Michcald\Dummy\Dao
                 'dbname' => \Michcald\Dummy\Config::getInstance()->database['dbname'],
                 'table'  => $repository['name'],
                 'column' => $model->getName(),
-                'referencedTable' => $model->getForeignTable(),
+                'referencedTable' => $foreignTable,
                 'referencedColumn' => 'id'
             ));
 
