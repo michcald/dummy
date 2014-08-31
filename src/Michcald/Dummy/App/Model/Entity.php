@@ -69,47 +69,6 @@ class Entity extends \Michcald\Dummy\Model
         return $array;
     }
 
-    public function toExposeArray2()
-    {
-        $array = array();
-
-        foreach ($this->repository->getFields() as $field) {
-
-            $fieldName = $field->getName();
-
-            if (array_key_exists($fieldName, $this->vars)
-                    && $this->vars[$fieldName]) {
-
-                if ($field instanceof Repository\Field\File) {
-
-                    $config = Config::getInstance();
-
-                    // @TODO refactor
-                    $url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-                    $url = str_replace('/index.php', '', $url);
-
-                    $url .= '/uploads/' .
-                            $this->getRepository()->getName() . '/' .
-                            $this->id . '/' . $this->vars[$fieldName];
-
-                    $array[$fieldName] = array(
-                        'url' => $url,
-                        'size' => @filesize('../' . $url)
-                    );
-
-                    // if img write the width and the height
-                } else {
-                    $array[$fieldName] = $this->vars[$fieldName];
-                }
-
-            } else {
-                $array[$fieldName] = null;
-            }
-        }
-
-        return $array;
-    }
-
     public function toArray()
     {
         $array = array();

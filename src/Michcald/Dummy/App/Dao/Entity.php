@@ -62,8 +62,6 @@ class Entity extends \Michcald\Dummy\Dao
         return $entity;
     }
 
-
-
     public function persist($entity)
     {
         /* @var $entity \Michcald\Dummy\App\Model\Entity */
@@ -75,10 +73,16 @@ class Entity extends \Michcald\Dummy\Dao
 
         $result = $fieldDao->findAll($query);
 
+        $entityArray = $entity->toArray();
+
         foreach ($result->getResults() as $field) {
 
             /* @var $field \Michcald\Dummy\App\Model\Repository\Field */
             if ($field->getType() == 'file') {
+
+                if (!isset($entityArray[$field->getName()])) {
+                    $entityArray[$field->getName()] = '';
+                }
 
                 $uploadDir = __DIR__ . '/../../../../../pub/uploads/' . $this->repository->getId();
 
@@ -89,7 +93,6 @@ class Entity extends \Michcald\Dummy\Dao
                     }
                 }
 
-                $entityArray = $entity->toArray();
                 $fileArray = $entityArray[$field->getName()];
 
                 if (isset($fileArray['name'])) {
@@ -107,6 +110,7 @@ class Entity extends \Michcald\Dummy\Dao
                     $key = $field->getName();
                     $entity->$key = $newFilename;
                 }
+
             }
         }
 

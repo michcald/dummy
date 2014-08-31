@@ -87,7 +87,7 @@ abstract class Dao
 
             $s = $this->getDb()->prepare($updateSql);
             $s->execute($values);
-
+            
         } else {
 
             $updateSql = sprintf('INSERT INTO %s ', $this->getTable());
@@ -123,7 +123,7 @@ abstract class Dao
 
             $s = $this->getDb()->prepare($updateSql);
             $s->execute($values);
-            
+
             // last insert id
             /*$stm = $this->getDb()->prepare(
                 sprintf('SELECT MAX(id) FROM %s', $this->getTable())

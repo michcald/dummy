@@ -216,6 +216,18 @@ routes:
       controller: \Michcald\Dummy\App\Controller\EntityController
       action: readAction
 
+    - name: dummy.entity.update
+      methods: ["PUT"]
+      uri:
+          pattern: "repository/{repositoryId}/entity/{id}"
+          requirements:
+              - param: repositoryId
+                value: \d+
+              - param: id
+                value: "\d+"
+      controller: \Michcald\Dummy\App\Controller\EntityController
+      action: updateAction
+
     - name: dummy.entity.delete
       methods: ["DELETE"]
       uri:

@@ -146,32 +146,14 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         return $response;
     }
 
-    private function processForm(
-        \Michcald\Dummy\App\Model\Repository $repository
-    ) {
-        $this->dao->setRepository($repository);
-
-        // find all the fields
-        $query = new \Michcald\Dummy\Dao\Query();
-        $query->addWhere('repository_id', $repository->getId())
-            ->addOrder('display_order', 'ASC')
-            ->setLimit(10000);
-        $fields = $this->repositoryFieldDao->findAll($query);
-
-        $form = new \Michcald\Dummy\App\Form\Model\Entity(
-            $fields->getResults()
-        );
-
-        $form->setValues($this->getRequest()->getData());
-
+    private function processForm(\Michcald\Dummy\App\Form\Model\Entity $form, $entity, $code = 201)
+    {
         if ($form->isValid()) {
-
-            $entity = $this->dao->create($form->getValues());
 
             $this->dao->persist($entity);
 
             $response = new \Michcald\Dummy\Response\Json();
-            $response->setStatusCode(201)
+            $response->setStatusCode($code)
                 ->setContent($entity->getId());
 
             return $response;
@@ -183,7 +165,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             $formErrors = array();
             foreach ($form->getElements() as $element) {
                 $formErrors[$element->getName()] = array(
-                    'value' => $values[$element->getName()],
+                    'value' => isset($values[$element->getName()]) ? $values[$element->getName()] : '',
                     'errors' => $element->getErrorMessages()
                 );
             }
@@ -209,18 +191,63 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryId);
         }
 
-        return $this->processForm($repository);
+        $this->dao->setRepository($repository);
+
+        // find all the fields
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $repository->getId())
+            ->addOrder('display_order', 'ASC')
+            ->setLimit(10000);
+        $fields = $this->repositoryFieldDao->findAll($query);
+
+        $form = new \Michcald\Dummy\App\Form\Model\Entity(
+            $fields->getResults()
+        );
+
+        $form->setValues($this->getRequest()->getData());
+
+        $entity = $this->dao->create($form->getValues());
+
+        return $this->processForm($form, $entity);
     }
 
-    public function updateAction($repositoryName, $id)
+    public function updateAction($repositoryId, $id)
     {
-        $repository = $this->findRepository($repositoryName);
+        $repository = $this->findRepository($repositoryId);
 
         if (!$repository) {
             return new \Michcald\Dummy\Response\Json\NotFound('Repository not found: ' . $repositoryName);
         }
 
-        return $this->processForm($repository);
+        $this->dao->setRepository($repository);
+
+        // find all the fields
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('repository_id', $repository->getId())
+            ->addOrder('display_order', 'ASC')
+            ->setLimit(10000);
+        $fields = $this->repositoryFieldDao->findAll($query);
+
+        $form = new \Michcald\Dummy\App\Form\Model\Entity(
+            $fields->getResults()
+        );
+
+        $form->setValues($this->getRequest()->getData());
+
+        $query = new \Michcald\Dummy\Dao\Query();
+        $query->addWhere('id', $id);
+        /* @var $entity \Michcald\Dummy\App\Model\Entity */
+        $entity = $this->dao->findOne($query);
+
+        if (!$entity) {
+            return new \Michcald\Dummy\Response\Json\NotFound(sprintf('Entity not found: %d', $id));
+        }
+
+        $entityNew = $this->dao->create($form->getValues());
+
+        $entityNew->setId($entity->getId());
+
+        return $this->processForm($form, $entityNew, 204);
     }
 
     public function deleteAction($repositoryId, $id)
