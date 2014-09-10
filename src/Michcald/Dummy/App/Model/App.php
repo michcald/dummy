@@ -12,8 +12,6 @@ class App extends \Michcald\Dummy\Model
 
     private $isAdmin;
 
-    private $baseUrl;
-
     private $publicKey;
 
     private $privateKey;
@@ -66,18 +64,6 @@ class App extends \Michcald\Dummy\Model
         return $this->isAdmin;
     }
 
-    public function setBaseUrl($baseUrl)
-    {
-        $this->baseUrl = $baseUrl;
-
-        return $this;
-    }
-
-    public function getBaseUrl()
-    {
-        return $this->baseUrl;
-    }
-
     public function setPublicKey($publicKey)
     {
         $this->publicKey = $publicKey;
@@ -110,7 +96,6 @@ class App extends \Michcald\Dummy\Model
             'title' => $this->title,
             'description' => $this->description,
             'is_admin' => $this->isAdmin,
-            'base_url' => $this->baseUrl,
             'public_key' => $this->publicKey,
             'private_key' => $this->privateKey,
         );

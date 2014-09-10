@@ -11,7 +11,7 @@ abstract class Bootstrap
         self::initConfig();
         self::initRoutes();
         self::initEventListeners();
-        self::initMonolog();
+        //self::initMonolog();
         self::initDb();
         self::initDbSchema();
         self::initRequest();

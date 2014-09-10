@@ -81,11 +81,17 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
                 $entityQuery->addWhere($filter['field'], $filter['value']);
             }
 
-            if ($searchQuery && strlen($searchQuery) > 2) {
+            if ($searchQuery) {
+                $searchableCount = 0;
                 foreach ($fields->getResults() as $field) {
                     if ($field->isSearchable()) {
                         $entityQuery->addLike($field->getName(), $values['query']);
+                        $searchableCount++;
                     }
+                }
+
+                if ($searchableCount == 0) {
+                    $entityQuery->addWhere('0', 1);
                 }
             }
 

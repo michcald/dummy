@@ -13,7 +13,6 @@ class App extends \Michcald\Dummy\Dao
                 ->setTitle($row['title'])
                 ->setDescription($row['description'])
                 ->setIsAdmin($row['is_admin'])
-                ->setBaseUrl($row['base_url'])
                 ->setPublicKey($row['public_key'])
                 ->setPrivateKey($row['private_key'])
                 ;

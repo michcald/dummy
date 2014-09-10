@@ -16,13 +16,13 @@ class Monolog implements \Michcald\Mvc\Event\SubscriberInterface
         $request = $event->get('mvc.request');
 
         /* @var \Monolog\Logger $logger */
-        $logger = \Michcald\Mvc\Container::get('dummy.monolog');
+        /*$logger = \Michcald\Mvc\Container::get('dummy.monolog');
 
         $log = sprintf('%s %s', $request->getMethod(), $request->getUri());
 
         $logger->addInfo(
             $log,
             $request->getHeaders()
-        );
+        );*/
     }
 }

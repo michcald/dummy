@@ -28,11 +28,6 @@ class App extends \Michcald\Form
         $description->setName('description');
         $this->addElement($description);
 
-        $baseUrl = new \Michcald\Form\Element\Text();
-        $baseUrl->setName('base_url')
-            ->addValidator(new \Michcald\Validator\NotEmpty());
-        $this->addElement($baseUrl);
-
         $val = new \Michcald\Validator\String();
         $val->setRegex('^[01]$');
 
