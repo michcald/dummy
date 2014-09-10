@@ -87,7 +87,7 @@ abstract class Dao
 
             $s = $this->getDb()->prepare($updateSql);
             $s->execute($values);
-            
+
         } else {
 
             $updateSql = sprintf('INSERT INTO %s ', $this->getTable());

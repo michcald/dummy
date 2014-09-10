@@ -35,7 +35,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
 
         $page = $this->getRequest()->getQueryParam('page', '1');
         $limit = $this->getRequest()->getQueryParam('limit', '30');
-        $query = $this->getRequest()->getQueryParam('query', '');
+        $searchQuery = $this->getRequest()->getQueryParam('query', '');
         $filters = $this->getRequest()->getQueryParam('filters', array());
         $orders = $this->getRequest()->getQueryParam('orders', array());
 
@@ -44,7 +44,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $form->setValues(array(
             'page' => $page,
             'limit' => $limit,
-            'query' => $query,
+            'query' => $searchQuery,
             'filters' => $filters,
             'orders' => $orders
         ));
@@ -53,6 +53,7 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
         $query = new \Michcald\Dummy\Dao\Query();
         $query->addWhere('repository_id', $repositoryId)
             ->setLimit(10000);
+
         $fields = $this->repositoryFieldDao->findAll($query);
         foreach ($fields->getResults() as $f) {
             /* @var $f \Michcald\Dummy\App\Model\Repository\Field */
@@ -80,9 +81,11 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
                 $entityQuery->addWhere($filter['field'], $filter['value']);
             }
 
-            foreach ($repository->getFields() as $field) {
-                if ($field->isSearchable()) {
-                    $entityQuery->addLike($field->getName(), $values['query']);
+            if ($searchQuery && strlen($searchQuery) > 2) {
+                foreach ($fields->getResults() as $field) {
+                    if ($field->isSearchable()) {
+                        $entityQuery->addLike($field->getName(), $values['query']);
+                    }
                 }
             }
 
