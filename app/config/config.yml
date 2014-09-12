@@ -1,0 +1,33 @@
+repository:
+    field:
+        types:
+            - name: boolean
+              sql: "INT(1)"
+            - name: color
+              sql: "VARCHAR(255)"
+            - name: date
+              sql: "DATE"
+            - name: email
+              sql: "VARCHAR(255)"
+            - name: html
+              sql: "TEXT"
+            - name: file
+              sql: "VARCHAR(255)"
+            - name: float
+              sql: "FLOAT(5)"
+            - name: foreign
+              sql: "INT"
+            - name: integer
+              sql: "INT"
+            - name: range
+              sql: "VARCHAR(255)"
+            - name: select
+              sql: "VARCHAR(255)"
+            - name: string
+              sql: "VARCHAR(255)"
+            - name: text
+              sql: "TEXT"
+            - name: timestamp
+              sql: "TIMESTAMP"
+            - name: url
+              sql: "TEXT"

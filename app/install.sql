@@ -43,7 +43,6 @@ CREATE TABLE IF NOT EXISTS meta_app (
     `title` VARCHAR(255) NOT NULL,
     `description` TEXT NULL,
     `is_admin` TINYINT NOT NULL DEFAULT 0,
-    `base_url` VARCHAR(255) NOT NULL,
     `public_key` VARCHAR(64) NOT NULL,
     `private_key` VARCHAR(64) NOT NULL,
     UNIQUE(`name`),

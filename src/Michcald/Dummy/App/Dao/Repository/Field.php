@@ -59,38 +59,18 @@ class Field extends \Michcald\Dummy\Dao
 
         parent::persist($model);
 
+        $config = \Michcald\Dummy\Config::getInstance();
+
         $type = null;
-        switch ($model->getType()) {
-            case 'string':
-            case 'file':
-            case 'color':
-            case 'email':
-            case 'range':
-            case 'select':
-                $type = 'VARCHAR(255)';
+        foreach ($config->repository['field']['types'] as $type) {
+            if ($model->getType() == $type['name']) {
+                $type = $type['sql'];
                 break;
-            case 'text':
-            case 'url':
-                $type = 'TEXT';
-                break;
-            case 'integer':
-            case 'foreign':
-                $type = 'INT(11)';
-                break;
-            case 'float':
-                $type = 'FLOAT(5)';
-                break;
-            case 'boolean':
-                $type = 'INT(1)';
-                break;
-            case 'timestamp':
-                $type = 'TIMESTAMP';
-                break;
-            case 'date':
-                $type = 'DATE';
-                break;
-            default:
-                throw new \Exception(sprintf('Invalid type: %s', $model->getType()));
+            }
+        }
+
+        if (!$type) {
+            throw new \Exception(sprintf('Invalid type: %s', $model->getType()));
         }
 
         if ($field) {
@@ -108,6 +88,7 @@ class Field extends \Michcald\Dummy\Dao
             // @TODO manager foreign
 
         } else {
+
             $db->exec(sprintf(
                 'ALTER TABLE %s ADD %s %s %s',
                 $repository['name'],

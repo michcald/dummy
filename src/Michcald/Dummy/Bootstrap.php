@@ -13,7 +13,7 @@ abstract class Bootstrap
         self::initEventListeners();
         //self::initMonolog();
         self::initDb();
-        self::initDbSchema();
+        //self::initDbSchema();
         self::initRequest();
     }
 
@@ -22,7 +22,9 @@ abstract class Bootstrap
         $dir = realpath(__DIR__ . '/../../../app/config');
 
         $config = \Michcald\Dummy\Config::getInstance();
-        $config->loadDir($dir);
+        $config->loadFile(sprintf('%s/routes.yml', $dir));
+        $config->loadFile(sprintf('%s/parameters.yml', $dir));
+        $config->loadFile(sprintf('%s/config.yml', $dir));
     }
 
     private static function initEventListeners()

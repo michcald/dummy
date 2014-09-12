@@ -14,6 +14,21 @@ class FieldController extends Crud implements Administrable
         $this->dao = new \Michcald\Dummy\App\Dao\Repository\Field();
     }
 
+    public function typesAction()
+    {
+        $config = \Michcald\Dummy\Config::getInstance();
+
+        $types = array();
+        foreach ($config->repository['field']['types'] as $t) {
+            $types[] = $t['name'];
+        }
+
+        $response = new \Michcald\Dummy\Response\Json();
+        $response->setStatusCode(200)
+            ->setContent($types);
+        return $response;
+    }
+
     public function createAction()
     {
         $form = new \Michcald\Dummy\App\Form\Model\Repository\Field();

@@ -2,7 +2,6 @@
 
 namespace Michcald\Dummy\App\Controller\Repository;
 
-use Michcald\Dummy\Interfaces\Administrable;
 use Michcald\Dummy\Controller\Crud;
 
 class FieldController extends Crud

@@ -37,7 +37,7 @@ class Config
             $data = \Symfony\Component\Yaml\Yaml::parse($content, true);
             $this->data = array_merge_recursive($this->data, $data);
         } catch (\Exception $e) {
-            throw new Exception\FileNotValid($filename);
+            throw new Exception\FileNotValid($e->getMessage());
         }
     }
 

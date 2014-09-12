@@ -4,25 +4,12 @@ namespace Michcald\Dummy\App\Form\Model\Repository;
 
 class Field extends \Michcald\Form
 {
-    private $types = array(
-        'string',
-        'text',
-        'select',
-        'integer',
-        'float',
-        'boolean',
-        'timestamp',
-        'file',
-        'foreign',
-        'url',
-        'date',
-        'color',
-        'email',
-        'range'
-    );
+    private $types;
 
     public function __construct()
     {
+        $this->types = \Michcald\Dummy\Config::getInstance()->repository['field']['types'];
+
         $repoId = new \Michcald\Form\Element\Text();
         $repoId->setName('repository_id')
             ->addValidator(new \Michcald\Validator\NotEmpty());

@@ -136,6 +136,14 @@ routes:
 
     # repository field
     
+    - name: dummy.repository.field.type
+      methods: ["GET"]
+      uri:
+          pattern: repository_field_type
+          requirements: []
+      controller: \Michcald\Dummy\App\Controller\Administrable\Repository\FieldController
+      action: typesAction
+    
     - name: dummy.repository.field.create
       methods: ["POST"]
       uri:
