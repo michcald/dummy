@@ -13,7 +13,6 @@ abstract class Bootstrap
         self::initEventListeners();
         //self::initMonolog();
         self::initDb();
-        //self::initDbSchema();
         self::initRequest();
     }
 
@@ -23,8 +22,11 @@ abstract class Bootstrap
 
         $config = \Michcald\Dummy\Config::getInstance();
         $config->loadFile(sprintf('%s/routes.yml', $dir));
-        $config->loadFile(sprintf('%s/parameters.yml', $dir));
         $config->loadFile(sprintf('%s/config.yml', $dir));
+
+        if (file_exists(sprintf('%s/parameters.yml', $dir))) {
+            $config->loadFile(sprintf('%s/parameters.yml', $dir));
+        }
     }
 
     private static function initEventListeners()
@@ -76,6 +78,10 @@ abstract class Bootstrap
     private static function initDb()
     {
         $config = \Michcald\Dummy\Config::getInstance();
+
+        if (!isset($config->database)) {
+            return;
+        }
 
         $dsn = sprintf(
             '%s:host=%s;dbname=%s',

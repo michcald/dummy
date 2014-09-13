@@ -47,8 +47,8 @@ class Entity extends \Michcald\Dummy\Dao
                     if ($field->getType() == 'file') {
                         if ($entity->$fieldName) {
                             $entity->$fieldName = sprintf(
-                                '%spub/uploads/%d/%s',
-                                \Michcald\Dummy\Config::getInstance()->base_url,
+                                '%s/pub/uploads/%d/%s',
+                                \Michcald\Dummy\Config::getInstance()->base_dir,
                                 $this->repository->getId(),
                                 $row[$fieldName]
                             );

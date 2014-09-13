@@ -13,6 +13,16 @@ class Auth implements \Michcald\Mvc\Event\SubscriberInterface
 
     public function grantAccess(\Michcald\Mvc\Event\Event $event)
     {
+        // only if it's installed
+
+        $file = __DIR__ . '/../../../../../app/config/parameters.yml';
+
+        $filePath = realpath($file);
+
+        if (!$filePath) {
+            return;
+        }
+
         /* @var $request \Michcald\Dummy\Request */
         $request = $event->get('mvc.request');
 
