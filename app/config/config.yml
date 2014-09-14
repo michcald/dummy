@@ -19,6 +19,8 @@ repository:
               sql: "INT"
             - name: integer
               sql: "INT"
+            - name: password
+              sql: "VARCHAR(255)"
             - name: range
               sql: "VARCHAR(255)"
             - name: select
