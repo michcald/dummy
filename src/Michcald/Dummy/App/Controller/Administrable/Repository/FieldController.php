@@ -152,6 +152,18 @@ class FieldController extends Crud implements Administrable
 
             $updatedField->setId($field->getId());
 
+            if ($field->getName() != $updatedField->getName()) {
+                $response = new \Michcald\Dummy\Response\Json();
+                $response->setStatusCode(409) // conflict
+                    ->setContent(array(
+                        'error' => array(
+                            'status_code' => 409,
+                            'message' => 'The field name cannot be changed'
+                        )
+                    ));
+                return $response;
+            }
+
             $this->dao->persist($updatedField);
 
             $response = new \Michcald\Dummy\Response\Json();
