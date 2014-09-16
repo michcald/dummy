@@ -19,7 +19,7 @@ class Field extends \Michcald\Form
         $type->setName('type')
             ->addValidator(new \Michcald\Validator\NotEmpty());
         foreach ($this->types as $t) {
-            $type->addOption($t, $t);
+            $type->addOption($t['name'], $t['name']);
         }
         $this->addElement($type);
 

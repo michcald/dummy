@@ -102,5 +102,4 @@ class FieldController extends Crud
 
         return $response;
     }
-
 }
