@@ -1,15 +1,5 @@
 routes:
-    
-    # install
-    
-    - name: dummy.install
-      methods: ["GET"]
-      uri:
-          pattern: install
-          requirements: []
-      controller: \Michcald\Dummy\App\Controller\InstallController
-      action: indexAction
-    
+
     # app
 
     - name: dummy.app.whoami

@@ -49,10 +49,12 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
             'orders' => $orders
         ));
 
-        $availableFilters = array();
         $query = new \Michcald\Dummy\Dao\Query();
         $query->addWhere('repository_id', $repositoryId)
             ->setLimit(10000);
+
+        $availableFilters = array();
+        $availableSorters = array();
 
         $fields = $this->repositoryFieldDao->findAll($query);
         foreach ($fields->getResults() as $f) {
@@ -61,9 +63,14 @@ class EntityController extends \Michcald\Mvc\Controller\HttpController
                 continue;
             }
             $availableFilters[] = $f->getName();
+
+            if ($f->isSortable()) {
+                $availableSorters[] = $f->getName();
+            }
         }
 
         $form->setFilters($availableFilters);
+        $form->setOrders($availableSorters);
 
         if ($form->isValid()) {
 

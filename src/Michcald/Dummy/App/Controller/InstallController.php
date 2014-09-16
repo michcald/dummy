@@ -6,6 +6,8 @@ class InstallController extends \Michcald\Mvc\Controller\HttpController
 {
     public function indexAction()
     {
+
+        
         die('install');
     }
 }

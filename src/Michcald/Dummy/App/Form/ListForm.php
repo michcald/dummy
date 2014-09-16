@@ -94,12 +94,12 @@ class ListForm extends \Michcald\Form
                 }
 
                 if (!in_array($filter['field'], $this->orders)) {
-                    $this->extraErrors[] = sprintf('Order "%s" not valid', $filter['fields']);
+                    $this->extraErrors[] = sprintf('Order "%s" not valid', $filter['field']);
                     return false;
                 }
 
                 if (!in_array(strtolower($filter['direction']), array('asc', 'desc'))) {
-                    $this->extraErrors[] = sprintf('Order "%s" not valid direction %s', $filter['fields'], $filter['direction']);
+                    $this->extraErrors[] = sprintf('Order "%s" not valid direction %s', $filter['field'], $filter['direction']);
                     return false;
                 }
             }
