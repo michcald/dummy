@@ -16,8 +16,8 @@ class Auth implements \Michcald\Mvc\Event\SubscriberInterface
         /* @var $request \Michcald\Dummy\Request */
         $request = $event->get('mvc.request');
 
-        $publicKey = $request->getHeader('PHP_AUTH_USER', false);
-        $privateKey = $request->getHeader('PHP_AUTH_PW', false);
+        $publicKey = $request->getHeader('HTTP_X_DUMMY_PUBLIC', false);
+        $privateKey = $request->getHeader('HTTP_X_DUMMY_PRIVATE', false);
 
         if (!$publicKey) {
             $response = new \Michcald\Dummy\Response\Json();
